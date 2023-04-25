@@ -1,4 +1,3 @@
-
 import { createApp } from "vue";
 import App from "./App.vue";
 
@@ -13,5 +12,3 @@ window.onload = async () => {
     app.mount('#crx-app');
   }
 }
-
-
