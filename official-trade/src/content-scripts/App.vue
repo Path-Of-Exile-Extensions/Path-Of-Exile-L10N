@@ -4,15 +4,12 @@
     </div>
 </template>
 <script setup>
-import {LanguageService} from "@poel10n/extra";
+import {JustLogger, LanguageService, PreferenceService} from "@poel10n/extra";
 import {onMounted} from "vue";
 
-onMounted(() => {
-  console.log("??")
-  LanguageService.Instance
-    .initialize(() => {
-      debugger
-    })
+onMounted(async () => {
+  await PreferenceService.Instance.initialize()
+  await LanguageService.Instance.initialize()
 })
 </script>
 <style scoped>

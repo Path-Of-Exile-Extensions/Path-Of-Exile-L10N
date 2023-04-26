@@ -1,2 +1,2 @@
-export * from './language/language.service'
-export * from './language/language.repository'
+export * from './language'
+export * from './preference'

@@ -1,8 +1,7 @@
-import {
-  Language,
-  LanguageLocalRepository,
-  LanguageRemoteRepository
-} from "./language.repository";
+import {LanguageLocalRepository, LanguageRemoteRepository} from "./language.repository";
+import {isNilOrEmpty} from "../../atomic/is";
+import {JustLogger} from "../../atomic";
+import {CharacterDocType} from "./language.schema";
 
 export class LanguageService {
   // 单例
@@ -18,6 +17,11 @@ export class LanguageService {
     return LanguageService.instance;
   }
 
+  // 基础语言包
+  private _baseLanguages!:  Map<string, CharacterDocType>;
+  // 特性语言包
+  private _descriptionLanguages!: Map<string, CharacterDocType>;
+
   constructor(
     private readonly languageLocalRepository: LanguageLocalRepository,
     private readonly languageRemoteRepository: LanguageRemoteRepository,
@@ -32,23 +36,24 @@ export class LanguageService {
     await this.languageLocalRepository.initialize();
     await this.languageRemoteRepository.initialize();
     // 先判断本地有没有, 如果本地没有就从远端获取
-    let language = await this.languageLocalRepository.getAll();
-    debugger
-    if (!language) {
-      language = await this.languageRemoteRepository.getAll();
+    let common = await this.languageLocalRepository.getCommon();
+    if (isNilOrEmpty(common)) {
+      common = await this.languageRemoteRepository.getCommon();
     }
-
-    return language;
+    this._baseLanguages = new Map(Object.entries(common));
+    JustLogger.Instance.info("LanguageService initialized", this._baseLanguages)
+    return Promise.resolve();
   }
 
   /**
    * 从远端更新所有语言
    */
   async updateLanguageAsset(): Promise<any> {
-    return this.languageRemoteRepository.getAll()
-      .then(res => {
-        // 存入本地
-        this.languageLocalRepository.saveAll(res);
-      })
+    return Promise.resolve();
+    // return this.languageRemoteRepository.getAll()
+    //   .then(res => {
+    //     // 存入本地
+    //     this.languageLocalRepository.saveAll(res);
+    //   })
   }
 }
