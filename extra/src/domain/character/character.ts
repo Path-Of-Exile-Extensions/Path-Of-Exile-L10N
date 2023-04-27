@@ -31,38 +31,13 @@ export const enum CharacterCategory {
   attribute = 2,
 }
 
-const _CharacterSchemaLiteral = {
-  title: 'Character',
-  version: 0,
-  primaryKey: 'c',
-  type: 'object',
-  properties: {
-    // characters 以原始英文作为主键(需要考虑是否冲突的问题)
-    c: {
-      type: 'string',
-      maxLength: 150
-    },
-    // category 分类 🐱
-    cat: {
-      type: 'number',
-    },
-    // timestamp 修订时间
-    t: {
-      type: 'number',
-    },
-  },
-  required: ['c', 'cat', 't'],
-} as const
-
-// const schemaTyped = toTypedRxJsonSchema(_CharacterSchemaLiteral);
-
-// aggregate the document type from the schema
-// export type CharacterDocType = ExtractDocumentTypeFromTypedRxJsonSchema<typeof schemaTyped>;
-export type CharacterDocType = {
+// 每个最小文本都会被生成一个 Character 结构体, 用于存储到本地
+export type Character = {
+  // 本地化的字符串
   c: string;
+  // 原始英文字符串
+  u: string;
+  // 分类
   cat: CharacterCategory;
-  t: number;
 };
 
-// create the typed RxJsonSchema from the literal typed object.
-export const CharacterSchemaLiteral: RxJsonSchema<CharacterDocType> = _CharacterSchemaLiteral;

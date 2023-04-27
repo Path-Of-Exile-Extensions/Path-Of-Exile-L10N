@@ -17,3 +17,8 @@ export function isNilOrEmpty(val: unknown): val is null | undefined | [] {
 export function not<T>(fn: (val: T) => boolean) {
   return (val: T) => !fn(val);
 }
+
+// 是否为空对象
+export function isEmptyObject(val: unknown): val is {} {
+  return typeof val === 'object' && Object.keys(val!).length === 0;
+}

@@ -19,6 +19,22 @@
             </SchemaInfo>
           </value>
         </entry>
+        <entry key="Chrome Extension">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="Chrome Extension" />
+              <option name="relativePathToSchema" value="https://json.schemastore.org/chrome-manifest.json" />
+              <option name="applicationDefined" value="true" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="official-trade/src/manifest.json" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
       </map>
     </state>
   </component>

@@ -1,9 +1,9 @@
 // 语言标识
 export enum LanguageIdentities {
   // 英语 (原始语言)
-  US = "us",
+  "us" = "us",
   // 简体中文
-  ZHSC = "zh-hans",
+  "zh-hans" = "zh-hans",
   // 繁体中文
-  ZHTC = "zh-hant",
+  "zh-hant" = "zh-hant",
 }
