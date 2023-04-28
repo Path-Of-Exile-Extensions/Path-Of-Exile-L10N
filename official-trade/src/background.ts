@@ -1,6 +1,9 @@
+import {DB} from "@poel10n/extra";
+
+await DB.Instance.initialize();
 chrome.webNavigation.onCompleted.addListener(
   (e) => {
-    // 进入交易页面
+
   },
   {
     url: [

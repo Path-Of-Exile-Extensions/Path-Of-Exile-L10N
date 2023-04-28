@@ -9,7 +9,7 @@ export class RepositoryBase<T> {
   /**
    * 删
    */
-  delete(struct: T): Promise<T> {
+  delete(struct: T): Promise<any> {
     throw new Error('not implemented');
   }
 

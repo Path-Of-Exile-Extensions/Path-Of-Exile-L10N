@@ -45,7 +45,7 @@ export class CharacterService {
     } else {
       this._baseLanguages = CharacterTransforms.arrayToMap(common);
     }
-    JustLogger.Instance.info("LanguageService initialized", this._baseLanguages)
+    JustLogger.Instance.info("POEL10N initialized")
     return Promise.resolve();
   }
 

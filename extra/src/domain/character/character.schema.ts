@@ -2,7 +2,7 @@ import {RxJsonSchema} from "rxdb";
 import {Character} from "./character";
 
 const _CharacterSchemaLiteral = {
-  title: 'Character',
+  title: 'character',
   version: 0,
   primaryKey: 'c',
   type: 'object',

@@ -1,7 +1,14 @@
-import { createApp } from "vue";
+import {createApp} from "vue";
 import App from "./App.vue";
+import {isPoeTrade} from "../classifed/is";
+import {DB} from "@poel10n/extra";
 
 window.onload = async () => {
+  // 如果不是 poe trade 则不执行
+  if (!isPoeTrade()) {
+    return;
+  }
+  await DB.Instance.initialize();
   const el = document.querySelector('body');
   if (el) {
     el.insertAdjacentHTML(

@@ -21,6 +21,7 @@ export default defineConfig(({mode}) => {
     ],
     build: {
       emptyOutDir: mode == 'production',
+      target: 'chrome110'
     },
   }
 })

@@ -8,7 +8,7 @@
   />
 </template>
 <script setup lang="ts">
-import {CharacterService, ChromeCommunicationAction, JustLogger, PreferenceService} from "@poel10n/extra";
+import {CharacterService, ChromeCommunicationAction, DB, JustLogger, PreferenceService} from "@poel10n/extra";
 import {onMounted} from "vue";
 import {useElementVirtualRef} from "../classifed/use-element-virtual-ref";
 
@@ -42,7 +42,7 @@ onMounted(async () => {
         CharacterService.Instance.updateAssets()
         break;
       case "ClearCaches":
-        CharacterService.Instance.clearCaches()
+        DB.Instance.remove();
         break;
     }
     return true;

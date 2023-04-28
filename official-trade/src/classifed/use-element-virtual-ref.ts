@@ -47,10 +47,6 @@ export const useElementVirtualRef = () => {
   const visible = ref(false)
   const vnode = ref("")
 
-  watch(visible, value => {
-    console.log("visible", visible.value)
-  })
-
   return reactive({
     triggerRef,
     visible,

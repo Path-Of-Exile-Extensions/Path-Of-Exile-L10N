@@ -1,11 +1,11 @@
-import {addRxPlugin, createRxDatabase, RxDatabase} from 'rxdb';
-import {getRxStorageDexie} from 'rxdb/plugins/storage-dexie';
+import {addRxPlugin} from 'rxdb';
 import {CharacterSchemaLiteral} from "./character.schema";
-import {JustLogger, LanguageIdentities, RepositoryBase} from "../../atomic";
+import {LanguageIdentities, RepositoryBase} from "../../atomic";
 import {RxDBDevModePlugin} from 'rxdb/plugins/dev-mode';
 import {PreferenceService} from "../preference";
 import {Character} from "./character";
 import {CharacterQuery} from "./character.query";
+import {DB} from "../../driver";
 
 addRxPlugin(RxDBDevModePlugin);
 
@@ -14,17 +14,15 @@ addRxPlugin(RxDBDevModePlugin);
 // 从本地取出是一组 Character(Character[])
 // 在内存中是   Map<USCharacter, Character>(Map对象, 键为英文, 值为 Character 对象)
 export class CharacterLocalRepository extends RepositoryBase<Character> {
-  private database!: RxDatabase;
+  get database() {
+    return DB.Instance.driver;
+  }
 
   saveAll(languages: Character[]): Promise<void> {
     return Promise.resolve();
   }
 
   async initialize(): Promise<void> {
-    this.database = await createRxDatabase({
-      name: 'poe_trade_l10n',
-      storage: getRxStorageDexie()
-    });
     await this.database.addCollections({
       [LanguageIdentities["zh-hans"]]: {
         schema: CharacterSchemaLiteral
@@ -37,16 +35,16 @@ export class CharacterLocalRepository extends RepositoryBase<Character> {
   }
 
   insert(struct: Character): Promise<void> {
-    return this.database[PreferenceService.Instance.preference.locale].insert(struct)
+    return this.database[PreferenceService.Instance.preference.language].insert(struct)
   }
 
   async upsert(struct: Character): Promise<null> {
-    return this.database[PreferenceService.Instance.preference.locale]
+    return this.database[PreferenceService.Instance.preference.language]
       .upsert(struct)
   }
 
   async upsertMany(structs: Character[]) {
-    return this.database[PreferenceService.Instance.preference.locale]
+    return this.database[PreferenceService.Instance.preference.language]
       .bulkInsert(structs)
   }
 
@@ -54,7 +52,7 @@ export class CharacterLocalRepository extends RepositoryBase<Character> {
    * 查找
    */
   async query(query: CharacterQuery): Promise<Character[]> {
-    return this.database[PreferenceService.Instance.preference.locale]
+    return this.database[PreferenceService.Instance.preference.language]
       .find({
         selector: query.toRXQuery(query)
       })
@@ -62,7 +60,7 @@ export class CharacterLocalRepository extends RepositoryBase<Character> {
   }
 
   deleteAll(): Promise<any> {
-    return this.database[PreferenceService.Instance.preference.locale].remove()
+    return this.database[PreferenceService.Instance.preference.language].remove()
   }
 
 }

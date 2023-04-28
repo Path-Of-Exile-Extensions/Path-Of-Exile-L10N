@@ -26,7 +26,13 @@ export class PreferenceService {
   async initialize(): Promise<any> {
     await this.preferenceRepository.initialize()
     const data = await this.preferenceRepository.get();
-    this._preference = data || PreferenceEntityDefault;
+    if (data) {
+      this._preference = data;
+    } else {
+      this._preference = PreferenceEntityDefault
+      // 更新本地
+      await this.preferenceRepository.create(this._preference);
+    }
     return Promise.resolve();
   }
 

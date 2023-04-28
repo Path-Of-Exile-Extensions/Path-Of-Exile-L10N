@@ -1,15 +1,61 @@
-import {JSONExt} from "../../atomic/json-ext";
 import {RepositoryBase} from "../../atomic";
+import {DB} from "../../driver";
+import {PreferenceSchemaLiteral} from "./preference.schema";
+import {PreferenceEntity} from "./preference.entity";
+import {RxDatabase} from "rxdb";
 
-export class PreferenceRepository extends RepositoryBase<PerformanceEntry> {
-  db = window.localStorage;
+const Identifier = "preference" as const
 
-  initialize(): Promise<any> {
+export class PreferenceRepository extends RepositoryBase<PreferenceEntity> {
+  get database(): RxDatabase {
+    return DB.Instance.driver;
+  }
+
+  async initialize(): Promise<any> {
+    await this.database.addCollections({
+      [Identifier]: {
+        schema: PreferenceSchemaLiteral
+      },
+    });
     return Promise.resolve()
   }
 
-  get(): Promise<any> {
-    const item = JSONExt.parse(this.db.getItem('preference'));
-    return Promise.resolve(item);
+  /**
+   * 读取第一条数据
+   */
+  get(): Promise<PreferenceEntity | null> {
+    return this.database[Identifier].findOne().exec();
+  }
+
+  /**
+   * 更新或覆盖
+   */
+  upsert(struct: PreferenceEntity): Promise<null> {
+    struct.id = 1;
+    return this.database[Identifier].upsert(struct)
+  }
+
+  /**
+   * 创建
+   */
+  async create(struct: PreferenceEntity): Promise<PreferenceEntity> {
+    struct.id = 1;
+    console.log("create1", struct)
+    await this.database[Identifier].insert(struct)
+    console.log("create2", struct)
+    return Promise.resolve(struct);
+  }
+
+  /**
+   * 删除
+   */
+  async delete(): Promise<null> {
+    const result = this.database[Identifier].find({
+      selector: {
+        id: 1
+      }
+    });
+    await result.remove();
+    return Promise.resolve(null);
   }
 }
