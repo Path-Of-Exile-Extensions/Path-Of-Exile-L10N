@@ -1,23 +1,32 @@
 <template>
-  <div class="container">
-
-  </div>
+  <el-tooltip
+    v-model:visible="elementVirtualRef.visible"
+    :content="elementVirtualRef.vnode"
+    effect="dark"
+    virtual-triggering
+    :virtual-ref="elementVirtualRef.triggerRef"
+  />
 </template>
 <script setup lang="ts">
 import {CharacterService, ChromeCommunicationAction, JustLogger, PreferenceService} from "@poel10n/extra";
 import {onMounted} from "vue";
+import {useElementVirtualRef} from "../classifed/use-element-virtual-ref";
+
+const elementVirtualRef = useElementVirtualRef();
 
 const patch = () => {
-  const tradeEl = document.querySelector("#trade")
-  const navigationEl = tradeEl.querySelector(".navigation")
-  const searchAdvanced = tradeEl.querySelector(".search-bar.search-advanced")
-  const allTitles: HTMLElement[] = [...searchAdvanced.querySelectorAll(".filter-title")]
+  const tradeEl = document.querySelector("#trade")!
+  const navigationEl = tradeEl.querySelector(".navigation")!
+  const searchAdvanced = tradeEl.querySelector(".search-bar.search-advanced")!
+  const allTitles: HTMLElement[] = Array.from(searchAdvanced.querySelectorAll(".filter-title"))
   allTitles.forEach(el => {
     const us = el.innerText.trim()
     const t = CharacterService.Instance.findATranslation(us)
     if (t) {
-      // 替换 el.innerText
-      el.innerText = el.innerText.replace(us, t)
+      el.dataset["poel10n"] = t
+      elementVirtualRef.observer(el)
+    } else {
+
     }
   })
 }
