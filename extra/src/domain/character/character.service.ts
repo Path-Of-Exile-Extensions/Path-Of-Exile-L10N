@@ -92,6 +92,17 @@ export class CharacterService {
   updateAssets() {
 
   }
+
+  /**
+   * 获取翻译
+   */
+  findATranslation(us: string): string | undefined {
+    const character = this._baseLanguages.get(us);
+    if (character) {
+      return character.c;
+    }
+    return undefined;
+  }
 }
 
 const CharacterTransforms = {

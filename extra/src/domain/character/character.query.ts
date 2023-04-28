@@ -21,7 +21,6 @@ export class CharacterQuery {
   // 过滤
   criteria: CharacterCriteria
 
-
   constructor(
     criteria: CharacterCriteria,
     sortBy: string[] = [],
