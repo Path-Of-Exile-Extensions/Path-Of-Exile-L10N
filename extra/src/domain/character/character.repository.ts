@@ -12,7 +12,7 @@ addRxPlugin(RxDBDevModePlugin);
 // 从远端获取是    Record<USCharacter, string>(Plain对象, 键为英文, 值为翻译)
 // 存入本地的是一个 Character
 // 从本地取出是一组 Character(Character[])
-// 在内存中是   Map<USCharacter, Character>(Map对象, 键为英文, 值为Character)
+// 在内存中是   Map<USCharacter, Character>(Map对象, 键为英文, 值为 Character 对象)
 export class CharacterLocalRepository extends RepositoryBase<Character> {
   private database!: RxDatabase;
 
@@ -59,6 +59,10 @@ export class CharacterLocalRepository extends RepositoryBase<Character> {
         selector: query.toRXQuery(query)
       })
       .exec();
+  }
+
+  deleteAll(): Promise<any> {
+    return this.database[PreferenceService.Instance.preference.locale].remove()
   }
 
 }

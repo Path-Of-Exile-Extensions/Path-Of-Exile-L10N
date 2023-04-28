@@ -79,6 +79,19 @@ export class CharacterService {
     return await this.remoteRepository.getCommon();
   }
 
+  /**
+   * 清除本地语言包
+   */
+  clearCaches(): Promise<void> {
+    return this.localRepository.deleteAll();
+  }
+
+  /**
+   * 更新语言包
+   */
+  updateAssets() {
+
+  }
 }
 
 const CharacterTransforms = {

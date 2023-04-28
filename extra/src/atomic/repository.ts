@@ -35,6 +35,13 @@ export class RepositoryBase<T> {
   }
 
   /**
+   * 删除所有
+   */
+  deleteAll(): Promise<any> {
+    throw new Error('not implemented');
+  }
+
+  /**
    * 更新多个
    */
   updateMany(structs: T[]): Promise<any> {

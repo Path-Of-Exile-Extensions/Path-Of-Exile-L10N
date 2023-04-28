@@ -1,4 +1,5 @@
 import {defineConfig} from 'vite'
+// @ts-ignore No Problem 
 import path from "path";
 import dts from 'vite-plugin-dts'
 
