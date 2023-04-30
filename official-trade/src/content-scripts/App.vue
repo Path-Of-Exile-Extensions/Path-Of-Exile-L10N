@@ -11,6 +11,9 @@
 import {CharacterService, ChromeCommunicationAction, DB, JustLogger, PreferenceService} from "@poel10n/extra";
 import {onMounted} from "vue";
 import {useElementVirtualRef} from "../classifed/use-element-virtual-ref";
+import usePoel10n from "../classifed/use-poel10n";
+
+const poel10n = usePoel10n();
 
 const elementVirtualRef = useElementVirtualRef();
 
@@ -21,9 +24,9 @@ const patch = () => {
   const allTitles: HTMLElement[] = Array.from(searchAdvanced.querySelectorAll(".filter-title"))
   allTitles.forEach(el => {
     const us = el.innerText.trim()
-    const t = CharacterService.Instance.findATranslation(us)
-    if (t) {
-      el.dataset["poel10n"] = t
+    const character = CharacterService.Instance.findATranslation(us)
+    if (character) {
+      el.dataset["poel10n"] = character.c
       elementVirtualRef.observer(el)
     } else {
 
@@ -32,8 +35,9 @@ const patch = () => {
 }
 
 onMounted(async () => {
-  await PreferenceService.Instance.initialize()
-  await CharacterService.Instance.initialize()
+  await poel10n.actions.initDBDrive();
+  await poel10n.actions.initUserPreference();
+  await poel10n.actions.initCharacterService();
   patch()
   chrome.runtime.onMessage.addListener((action: ChromeCommunicationAction.Actions) => {
     JustLogger.Instance.info("onMessage", action)

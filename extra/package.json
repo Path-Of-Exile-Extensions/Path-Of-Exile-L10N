@@ -6,13 +6,10 @@
     "package.json",
     "lib"
   ],
-  "main": "./lib/index.umd.js",
-  "module": "./lib/index.es.js",
-  "types": "./lib/index.d.ts",
+  "main": "./src/index.ts",
   "exports": {
     ".": {
-      "import": "./lib/index.es.js",
-      "require": "./lib/index.umd.js"
+      "import": "./src/index.ts"
     }
   },
   "scripts": {

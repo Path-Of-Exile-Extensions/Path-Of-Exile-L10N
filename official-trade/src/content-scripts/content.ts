@@ -8,7 +8,6 @@ window.onload = async () => {
   if (!isPoeTrade()) {
     return;
   }
-  await DB.Instance.initialize();
   const el = document.querySelector('body');
   if (el) {
     el.insertAdjacentHTML(

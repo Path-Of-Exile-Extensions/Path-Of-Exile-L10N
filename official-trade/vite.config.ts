@@ -1,16 +1,18 @@
 import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
-import crx from 'vite-plugin-crx-mv3'
+// import crx from 'vite-plugin-crx-mv3'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
+import { crx } from '@crxjs/vite-plugin'
+import manifest from './manifest.json'
 
 export default defineConfig(({mode}) => {
   return {
     plugins: [
       vue(),
       crx({
-        manifest: './src/manifest.json'
+        manifest: manifest
       }),
       AutoImport({
         resolvers: [ElementPlusResolver()],
@@ -21,7 +23,8 @@ export default defineConfig(({mode}) => {
     ],
     build: {
       emptyOutDir: mode == 'production',
-      target: 'chrome110'
+      target: 'chrome110',
+      minify: mode == 'production'
     },
   }
 })

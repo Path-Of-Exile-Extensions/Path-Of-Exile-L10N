@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "bootstrap": "pnpm install"
+    "bootstrap": "pnpm install",
+    "extra:dev": "pnpm --filter ./extra  run dev",
+    "trade:dev": "pnpm --filter ./official-trade run dev"
   }
 }

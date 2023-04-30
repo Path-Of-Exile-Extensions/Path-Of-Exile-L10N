@@ -12,7 +12,7 @@ export default defineConfig(({mode}) => {
       lib: {
         entry: path.resolve(__dirname, "src/index.ts"),
         fileName: (format) => `index.${format}.js`,
-        formats: ['es', 'umd'],
+        formats: ['es'],
         name: "poel10n-extra"
       },
       outDir: "./lib",

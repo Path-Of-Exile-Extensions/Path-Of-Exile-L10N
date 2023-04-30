@@ -96,10 +96,10 @@ export class CharacterService {
   /**
    * 获取翻译
    */
-  findATranslation(us: string): string | undefined {
-    const character = this._baseLanguages.get(us);
+  findATranslation(usString: string): Character | undefined {
+    const character = this._baseLanguages.get(usString);
     if (character) {
-      return character.c;
+      return character;
     }
     return undefined;
   }
