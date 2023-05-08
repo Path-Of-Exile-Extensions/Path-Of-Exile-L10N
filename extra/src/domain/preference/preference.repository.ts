@@ -31,7 +31,7 @@ export class PreferenceRepository extends RepositoryBase<PreferenceEntity> {
    * 更新或覆盖
    */
   upsert(struct: PreferenceEntity): Promise<null> {
-    struct.id = 1;
+    struct.id = "1";
     return this.database[Identifier].upsert(struct)
   }
 
@@ -39,10 +39,8 @@ export class PreferenceRepository extends RepositoryBase<PreferenceEntity> {
    * 创建
    */
   async create(struct: PreferenceEntity): Promise<PreferenceEntity> {
-    struct.id = 1;
-    console.log("create1", struct)
+    struct.id = "1";
     await this.database[Identifier].insert(struct)
-    console.log("create2", struct)
     return Promise.resolve(struct);
   }
 
@@ -52,7 +50,7 @@ export class PreferenceRepository extends RepositoryBase<PreferenceEntity> {
   async delete(): Promise<null> {
     const result = this.database[Identifier].find({
       selector: {
-        id: 1
+        id: "1"
       }
     });
     await result.remove();

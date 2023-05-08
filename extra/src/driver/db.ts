@@ -15,11 +15,11 @@ export class DB {
   }
 
   public async initialize(): Promise<void> {
-    JustLogger.Instance.log("DB Driver initialize");
     this.driver = await createRxDatabase({
       name: 'poe_l10n',
       storage: getRxStorageDexie()
     });
+    JustLogger.Instance.log("DB Driver initialized");
     return Promise.resolve();
   }
 

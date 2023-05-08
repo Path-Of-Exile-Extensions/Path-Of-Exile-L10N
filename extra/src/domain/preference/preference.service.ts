@@ -1,3 +1,4 @@
+import { JustLogger } from "../../atomic/logger";
 import {PreferenceEntity, PreferenceEntityDefault} from "./preference.entity";
 import {PreferenceRepository} from "./preference.repository";
 
@@ -24,7 +25,7 @@ export class PreferenceService {
   }
 
   async initialize(): Promise<any> {
-    await this.preferenceRepository.initialize()
+    await this.preferenceRepository.initialize();
     const data = await this.preferenceRepository.get();
     if (data) {
       this._preference = data;
@@ -33,6 +34,8 @@ export class PreferenceService {
       // 更新本地
       await this.preferenceRepository.create(this._preference);
     }
+    
+    JustLogger.Instance.log("Preference initialized");
     return Promise.resolve();
   }
 
