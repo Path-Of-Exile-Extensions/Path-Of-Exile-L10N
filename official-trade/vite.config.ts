@@ -1,10 +1,10 @@
 import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
-// import crx from 'vite-plugin-crx-mv3'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
 import { crx } from '@crxjs/vite-plugin'
+// @ts-ignore
 import manifest from './manifest.json'
 
 export default defineConfig(({mode}) => {

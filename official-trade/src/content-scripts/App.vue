@@ -34,6 +34,27 @@ const patch = () => {
   })
 }
 
+const test = () => {
+  const tradeEl = document.querySelector("#trade")!
+  const navigationEl = tradeEl.querySelector(".navigation")!
+  const searchAdvanced = tradeEl.querySelector(".search-bar.search-advanced")!
+
+  console.log("asasdasd")
+  fetch(`https://raw.githubusercontent.com/Path-Of-Exile-Extensions/Path-Of-Exile-Official-Trade-Assets/master/test.json`)
+    .then(res => res.json())
+    .then(res => {
+      const tradeEl = document.querySelector("#trade")!
+      const assets: Record<string, any> = res;
+
+      Object.entries(assets)
+        .forEach(([id, asset]) => {
+          if (tradeEl.querySelector(asset.elCSSSelector)) {
+            tradeEl.querySelector(asset.elCSSSelector).textContent = asset.localizedLiteral;
+          }
+        })
+    })
+}
+
 onMounted(async () => {
   await poel10n.actions.initDBDrive();
   await poel10n.actions.initUserPreference();

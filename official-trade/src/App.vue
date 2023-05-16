@@ -6,6 +6,7 @@
         <el-button @click="handleToContentScript('update')">更新资产</el-button>
         <el-button @click="handleToContentScript('clear')">清除资产</el-button>
         <el-button @click="handleToContentScript('reload')">重载</el-button>
+        <el-button @click="handleToContentScript('test')">测试</el-button>
       </el-button-group>
     </div>
   </el-config-provider>
@@ -16,13 +17,16 @@ import "./styles/popup.css"
 import MainPanel from "./compoments/pupup/main-panel.vue";
 import {ChromeCommunicationAction} from "@poel10n/extra";
 
-const handleToContentScript = (type: "update" | "clear" | "reload") => {
+const handleToContentScript = (type: "update" | "clear" | "reload" | "test") => {
   chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
     const tab = tabs[0];
     if (tab) {
       const id = tab!.id!
 
       switch (type) {
+        case "test":
+
+          break;
         case "update":
           chrome.tabs.sendMessage(id, new ChromeCommunicationAction.UpdateAssets());
           break;
