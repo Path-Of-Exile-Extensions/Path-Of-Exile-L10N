@@ -6,6 +6,8 @@ export type POEL10NViewState = {
   isInitingUserPreference: boolean,
   // 是否在初始化本地资产
   isInitingLocalAssets: boolean,
+  // 是否有本地资产
+  hasLocalAssets: boolean,
   // 是否需要更新资产
   needUpdateAssets: boolean,
   // 是否正在更新资产

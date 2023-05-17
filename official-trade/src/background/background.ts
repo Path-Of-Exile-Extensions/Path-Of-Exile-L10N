@@ -1,5 +1,3 @@
-import {DB} from "@poel10n/extra";
-
 chrome.runtime.onMessage.addListener(
   (request, sender, sendResponse) =>{
     if (request === "reload") {
@@ -13,7 +11,7 @@ chrome.runtime.onMessage.addListener(
 
 chrome.webNavigation.onCompleted.addListener(
   (e) => {
-    
+
   },
   {
     url: [

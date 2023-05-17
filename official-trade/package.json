@@ -26,7 +26,8 @@
     "autoprefixer": "^10.4.14",
     "unplugin-vue-components": "^0.24.1",
     "unplugin-auto-import": "^0.15.3",
-    "@crxjs/vite-plugin": "2.0.0-beta.17"
+    "@crxjs/vite-plugin": "2.0.0-beta.17",
+    "@poel10n/core": "link:../../core"
   },
   "license": "ISC"
 }
