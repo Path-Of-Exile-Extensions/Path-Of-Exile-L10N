@@ -8,11 +8,11 @@
   />
 </template>
 <script setup lang="ts">
-import {CharacterService, ChromeCommunicationAction, DB, JustLogger, PreferenceService} from "@poel10n/extra";
+import {CharacterService} from "@poel10n/extra";
 import {onMounted} from "vue";
 import {useElementVirtualRef} from "../classifed/use-element-virtual-ref";
 import usePoel10n from "../classifed/use-poel10n";
-import {AssetRecord, AssetVendor, Ext, LiteralPresentationMode} from "../../../../core";
+import {AssetVendor, AssetVendorMinimizeModel, Ext, LiteralPresentationMode} from "../../../../core";
 import {ExtMessagesIdentities} from "../classifed/ext-messages";
 
 const poel10n = usePoel10n();
@@ -41,7 +41,7 @@ const test = () => {
     .then(res => res.json())
     .then(res => {
       const tradeEl = document.querySelector("#trade")!
-      const assets: Record<string, AssetVendor> = res;
+      const assets: Record<string, AssetVendor> = AssetVendorMinimizeModel.decode(res);
 
       Object.entries(assets)
         .forEach(([id, asset]) => {
@@ -51,13 +51,8 @@ const test = () => {
           }
 
           if (asset.corrupted) {
-            el.innerHTML = el.innerHTML
-              .replace(asset.literal, asset.localizedLiteral)
+            el.innerHTML = el.innerHTML.replace(asset.literal, asset.localizedLiteral)
           } else {
-            if (asset.presentationMode === LiteralPresentationMode.Tooltip) {
-              console.log(el, asset)
-              return
-            }
             el.textContent = asset.localizedLiteral;
           }
         })

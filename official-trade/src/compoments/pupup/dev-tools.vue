@@ -1,13 +1,30 @@
 <template>
   <el-button-group>
-    <el-button @click="handleEvent(ExtMessagesIdentities.UpdateAssets)">更新资产</el-button>
-    <el-button @click="handleEvent(ExtMessagesIdentities.ClearAssets)">清除资产</el-button>
-    <el-button @click="handleEvent(ExtMessagesIdentities.Reload)">重载</el-button>
+    <el-button :loading="buttonLoadingStates.updateAssets" @click="handleEvent(ExtMessagesIdentities.UpdateAssets)">更新资产</el-button>
+    <el-button :loading="buttonLoadingStates.clearAssets" @click="handleEvent(ExtMessagesIdentities.ClearAssets)">清除资产</el-button>
+    <el-button :loading="buttonLoadingStates.reload" @click="handleEvent(ExtMessagesIdentities.Reload)">重载</el-button>
   </el-button-group>
 </template>
 <script setup lang="ts">
 import {ExtMessagesIdentities} from "../../classifed/ext-messages";
-import {Ext, ExtMessageDirections} from "@poel10n/core";
+import {BuiltInExtMessageIdentities, Ext, ExtMessageDirections} from "@poel10n/core";
+import {onMounted, reactive} from "vue";
+
+const buttonLoadingStates = reactive({
+  updateAssets: false,
+  clearAssets: false,
+  reload: false,
+});
+
+onMounted(() => {
+  Ext.on.message((message) => {
+    if (message.identify === BuiltInExtMessageIdentities.ContentScriptReady) {
+      buttonLoadingStates.clearAssets = false;
+      buttonLoadingStates.clearAssets = false;
+      buttonLoadingStates.reload = false;
+    }
+  });
+})
 
 const handleEvent = (messageId: ExtMessagesIdentities) => {
   switch (messageId) {

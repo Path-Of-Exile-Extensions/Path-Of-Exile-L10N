@@ -12,6 +12,7 @@ export enum PresentationMode {
 
 export type PreferenceEntity = {
   // 本地存储标识, 无意义
+  // LocalStorage Identity, just for rxdb primary key.
   id: "1";
   // 语言标识
   language: LanguageIdentities;
