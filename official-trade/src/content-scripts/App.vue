@@ -8,14 +8,21 @@
   />
 </template>
 <script setup lang="ts">
-import {CharacterService} from "@poel10n/extra";
-import {onMounted} from "vue";
+import {CharacterService} from "@poe-vela/l10n-ext";
+import {onMounted, shallowRef, watch} from "vue";
 import {useElementVirtualRef} from "../classifed/use-element-virtual-ref";
-import usePoel10n from "../classifed/use-poel10n";
-import {AssetVendor, AssetVendorMinimizeModel, Ext} from "@poe-vela/core";
+import usePoeVelaL10n from "../classifed/use-poe-vela-l10n";
+import {
+  AssetVendor,
+  AssetVendorMinimizeModel,
+  BuiltInExtMessageIdentities,
+  Ext,
+  ExtMessageDirections
+} from "@poe-vela/core";
+import {useDebounceFn} from "@vueuse/core";
 import {ExtMessagesIdentities} from "../classifed/ext-messages";
 
-const poel10n = usePoel10n();
+const poeVelaL10n = usePoeVelaL10n();
 
 const elementVirtualRef = useElementVirtualRef();
 
@@ -36,56 +43,80 @@ const patch = () => {
   })
 }
 
+let tradeEl: Element | null = null;
+const assets = shallowRef<Record<string, AssetVendor>>({})
+let freezed = false;
+
+const main = useDebounceFn(() => {
+  Object.entries(assets.value)
+    .forEach(([id, asset]) => {
+      const el = tradeEl!.querySelector(asset.elCSSSelector) as HTMLElement
+      if (!el) {
+        throw new Error(`can not find element by selector: ${asset.elCSSSelector}`)
+      }
+
+      if (asset.corrupted) {
+        el.innerHTML = el.innerHTML.replace(asset.literal, asset.localizedLiteral)
+      } else {
+        el.textContent = asset.localizedLiteral;
+      }
+    })
+}, 50)
+
 const test = () => {
-  fetch(`https://raw.githubusercontent.com/Path-Of-Exile-Extensions/Path-Of-Exile-Official-Trade-Assets/master/test.json`)
+  fetch(`https://raw.githubusercontent.com/Path-Of-Exile-Vela/L10N-Assets/master/test.json`)
     .then(res => res.json())
     .then(res => {
-      const tradeEl = document.querySelector("#trade")!
-      const assets: Record<string, AssetVendor> = AssetVendorMinimizeModel.decode(res);
-
-      Object.entries(assets)
-        .forEach(([id, asset]) => {
-          const el = tradeEl.querySelector(asset.elCSSSelector) as HTMLElement
-          if (!el) {
-            throw new Error(`can not find element by selector: ${asset.elCSSSelector}`)
+      tradeEl = document.querySelector("#trade")!
+      assets.value = AssetVendorMinimizeModel.decode(res);
+      const el = tradeEl.querySelector(".search-bar.search-advanced");
+      const observer = new MutationObserver(
+        () => {
+          console.log("回调 MutationObserver")
+          if (freezed) {
+            return
           }
+          freezed = true;
+          try {
+            main()
+          } catch (e) {
 
-          if (asset.corrupted) {
-            el.innerHTML = el.innerHTML.replace(asset.literal, asset.localizedLiteral)
-          } else {
-            el.textContent = asset.localizedLiteral;
           }
-        })
+          freezed = false;
+        }
+      )
+      observer.observe(el!, {childList: true})
+
+      main();
     })
 }
 
-onMounted(async () => {
-  // await poel10n.actions.initDBDrive();
-  // await poel10n.actions.initUserPreference();
-  // await poel10n.actions.initCharacterService();
-  // patch()
+onMounted(() => {
+  Ext.send.message(
+    {
+      identify: BuiltInExtMessageIdentities.ContentScriptReady,
+    },
+    ExtMessageDirections.Runtime,
+  )
+
   Ext.on.message(message => {
-    console.log("content script receive message: ", message)
+    console.log("content script 收到消息", message)
     switch (message.identify) {
-      case ExtMessagesIdentities.Translate:
-        test();
+      case BuiltInExtMessageIdentities.ContentScriptReadyResponse:
+        poeVelaL10n.actions.initial(message.payload)
+        break;
+      case ExtMessagesIdentities.OnPreferenceChanged:
+        poeVelaL10n.actions.updatePreference(message.payload)
         break;
     }
-    return true;
   })
-  // chrome.runtime.onMessage.addListener((action: ChromeCommunicationAction.Actions) => {
-  //   JustLogger.Instance.info("onMessage", action)
-  //   switch (action.TAG) {
-  //     case "UpdateAssets":
-  //       CharacterService.Instance.updateAssets()
-  //       break;
-  //     case "ClearCaches":
-  //       DB.Instance.remove();
-  //       break;
-  //   }
-  //   return true;
-  // });
 })
+
+watch(() => poeVelaL10n.state.preference, (state) => {
+  state.enableTranslation && test()
+})
+
+
 </script>
 <style scoped>
 

@@ -24,7 +24,7 @@ export class PreferenceRepository extends RepositoryBase<PreferenceEntity> {
    * 读取第一条数据
    */
   get(): Promise<PreferenceEntity | null> {
-    return this.database[Identifier].findOne().exec();
+    return this.database[Identifier].findOne().exec().then(res => res?.toJSON())
   }
 
   /**

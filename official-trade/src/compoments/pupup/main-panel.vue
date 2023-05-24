@@ -19,6 +19,13 @@
       </el-form-item>
       <el-form-item label="操作">
         <el-button-group>
+          <el-switch
+            active-text="应用"
+            inactive-text="禁用"
+            :value="poeVelaL10n.state.preference.enableTranslation"
+            @change="handleEnableTranslationChange"
+          >
+          </el-switch>
           <el-button @click="handleTranslate">应用</el-button>
           <el-button>更新资产</el-button>
         </el-button-group>
@@ -27,7 +34,7 @@
         <el-button-group>
           <el-button
             tag="a"
-            href="https://github.com/Path-Of-Exile-Extensions/Path-Of-Exile-L10N/discussions"
+            href="https://github.com/Path-Of-Exile-Vela/L10N/discussions"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -35,7 +42,7 @@
           </el-button>
           <el-button
             tag="a"
-            href="https://github.com/Path-Of-Exile-Extensions/Path-Of-Exile-L10N/discussions"
+            href="https://github.com/Path-Of-Exile-Vela/L10N/discussions"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -50,7 +57,7 @@
         <span class="pr-2">Source Code At</span>
         <el-link
           type="primary"
-          href="https://github.com/Path-Of-Exile-Extensions/Path-Of-Exile-L10N/"
+          href="https://github.com/Path-Of-Exile-Vela/L10N"
           target="_blank"
           rel="noopener noreferrer"
           class="py-0 h-auto"
@@ -81,6 +88,10 @@
 import {Ext, ExtMessageDirections, LanguageIdentities} from "@poe-vela/core";
 import {ExtMessagesIdentities} from "../../classifed/ext-messages";
 import {reactive} from "vue";
+import usePOEVelaL10n from "../../classifed/use-poe-vela-l10n";
+
+const poeVelaL10n = usePOEVelaL10n()
+
 const form = reactive({
   language: LanguageIdentities["zh-Hans"],
 })
@@ -90,6 +101,12 @@ const handleTranslate = () => {
     {identify: ExtMessagesIdentities.Translate},
     ExtMessageDirections.Tab,
   );
+}
+
+const handleEnableTranslationChange = () => {
+  poeVelaL10n.actions.updatePreference({
+    enableTranslation: !poeVelaL10n.state.preference.enableTranslation,
+  })
 }
 
 </script>

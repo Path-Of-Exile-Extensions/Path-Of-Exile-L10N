@@ -1,6 +1,7 @@
 import {createApp} from "vue";
 import App from "./App.vue";
-import {BuiltInExtMessageIdentities, Ext, ExtMessageDirections, waitSomeOne} from "@poe-vela/core";
+import {waitSomeOne} from "@poe-vela/core";
+import {createPinia} from 'pinia'
 
 if (document.readyState !== 'loading') {
   injectPOEL10ContentScript();
@@ -11,15 +12,20 @@ if (document.readyState !== 'loading') {
 }
 
 function injectPOEL10ContentScript() {
-  waitSomeOne("#trade")
-    .then(() => {
+  const loaderEL = document.querySelector("#trade .loader")! as HTMLElement;
+  const observer = new MutationObserver(() => {
+    if (loaderEL.style.display !== 'none') {
+      observer.disconnect();
       const el = document.querySelector('body')!;
       el.insertAdjacentHTML(
         'afterend',
         '<div id="crx-app"></div>',
       );
       const app = createApp(App)
+      app.use(createPinia())
       app.mount('#crx-app');
-      Ext.send.message({identify: BuiltInExtMessageIdentities.ContentScriptReady}, ExtMessageDirections.Runtime)
-    })
+    }
+  })
+
+  observer.observe(document.body!, {childList: true, subtree: true})
 }

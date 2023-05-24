@@ -24,7 +24,7 @@ export class PreferenceService {
 
   }
 
-  async initialize(): Promise<any> {
+  async initialize(): Promise<PreferenceEntity> {
     await this.preferenceRepository.initialize();
     const data = await this.preferenceRepository.get();
     if (data) {
@@ -34,13 +34,21 @@ export class PreferenceService {
       // 更新本地
       await this.preferenceRepository.create(this._preference);
     }
-    
     JustLogger.Instance.log("Preference initialized");
-    return Promise.resolve();
+    return Promise.resolve(this.preference);
   }
 
   get preference(): PreferenceEntity {
     return this._preference;
+  }
+
+  async upsert(preference: Partial<PreferenceEntity>): Promise<any> {
+    this._preference = {
+      ...this._preference,
+      ...preference,
+    }
+
+    return this.preferenceRepository.upsert(this._preference);
   }
 
 }

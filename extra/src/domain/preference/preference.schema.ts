@@ -1,4 +1,4 @@
-import {RxJsonSchema} from "rxdb";
+import type {RxJsonSchema} from "rxdb";
 import {PreferenceEntity} from "./preference.entity";
 
 const _PreferenceSchemaLiteral = {
@@ -17,7 +17,13 @@ const _PreferenceSchemaLiteral = {
     },
     presentationMode: {
       type: 'number',
-    }
+    },
+    enableTranslation: {
+      type: 'boolean',
+    },
+    enableCustomTranslation: {
+      type: 'boolean',
+    },
   },
   required: ["id"],
 } as const

@@ -1,4 +1,3 @@
-export * from './identities'
 export * from './is'
 export * from './json-ext'
 export * from './logger'

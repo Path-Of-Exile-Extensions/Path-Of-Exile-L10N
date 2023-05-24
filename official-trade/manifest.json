@@ -1,5 +1,5 @@
 {
-  "name": "POE Trade L10N",
+  "name": "POE Vela Trade L10N",
   "description": "A Path Of Exile Official Trade Website I10N Extension",
   "version": "1.0.0",
   "icons": {
@@ -14,7 +14,8 @@
     "webNavigation",
     "storage",
     "unlimitedStorage",
-    "activeTab"
+    "activeTab",
+    "background"
   ],
   "content_scripts": [
     {

@@ -1,6 +1,6 @@
-// 用贫血模型, 工具方法放到 service 中去
-import {LanguageIdentities} from "../../atomic";
+import {LanguageIdentities} from "@poe-vela/core";
 
+// 用贫血模型, 工具方法放到 service 中去
 export enum PresentationMode {
   // 鼠标移动到元素上时弹出
   Tooltip,
@@ -18,13 +18,16 @@ export type PreferenceEntity = {
   language: LanguageIdentities;
   // 文本显示样式
   presentationMode: PresentationMode;
+  // 是否启用翻译
+  enableTranslation: boolean;
   // 是否启用自定义翻译
   enableCustomTranslation: boolean;
 }
 
 export const PreferenceEntityDefault: PreferenceEntity = {
   id: "1",
-  language: LanguageIdentities["zh-hans"],
-  presentationMode: PresentationMode.Tooltip,
+  language: LanguageIdentities["zh-Hans"],
+  presentationMode: PresentationMode.Whole,
+  enableTranslation: false,
   enableCustomTranslation: false,
 }
