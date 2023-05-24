@@ -1,6 +1,6 @@
 import {createApp} from "vue";
 import App from "./App.vue";
-import {BuiltInExtMessageIdentities, Ext, ExtMessageDirections, waitSomeOne} from "@poel10n/core";
+import {BuiltInExtMessageIdentities, Ext, ExtMessageDirections, waitSomeOne} from "@poe-vela/core";
 
 if (document.readyState !== 'loading') {
   injectPOEL10ContentScript();

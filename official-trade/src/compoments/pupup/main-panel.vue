@@ -78,7 +78,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import {Ext, ExtMessageDirections, LanguageIdentities} from "@poel10n/core";
+import {Ext, ExtMessageDirections, LanguageIdentities} from "@poe-vela/core";
 import {ExtMessagesIdentities} from "../../classifed/ext-messages";
 import {reactive} from "vue";
 const form = reactive({

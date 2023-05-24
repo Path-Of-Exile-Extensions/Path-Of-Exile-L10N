@@ -12,7 +12,7 @@ import {CharacterService} from "@poel10n/extra";
 import {onMounted} from "vue";
 import {useElementVirtualRef} from "../classifed/use-element-virtual-ref";
 import usePoel10n from "../classifed/use-poel10n";
-import {AssetVendor, AssetVendorMinimizeModel, Ext} from "@poel10n/core";
+import {AssetVendor, AssetVendorMinimizeModel, Ext} from "@poe-vela/core";
 import {ExtMessagesIdentities} from "../classifed/ext-messages";
 
 const poel10n = usePoel10n();

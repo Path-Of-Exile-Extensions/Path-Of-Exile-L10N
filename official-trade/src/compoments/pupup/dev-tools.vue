@@ -7,7 +7,7 @@
 </template>
 <script setup lang="ts">
 import {ExtMessagesIdentities} from "../../classifed/ext-messages";
-import {BuiltInExtMessageIdentities, Ext, ExtMessageDirections} from "@poel10n/core";
+import {BuiltInExtMessageIdentities, Ext, ExtMessageDirections} from "@poe-vela/core";
 import {onMounted, reactive} from "vue";
 
 const buttonLoadingStates = reactive({
