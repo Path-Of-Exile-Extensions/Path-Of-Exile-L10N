@@ -2,7 +2,12 @@
   <div class="flex flex-col">
     <el-form size="small">
       <el-form-item label="语言">
-        <el-select v-model="form.language" placeholder="Select" class="w-full">
+        <el-select
+          :model-value="poeVelaL10n.state.preference.language"
+          placeholder="Select"
+          class="w-full"
+          @change="handleLanguageChange"
+        >
           <el-option
             label="简体中文 / Simplified Chinese"
             :value="LanguageIdentities['zh-Hans']"
@@ -17,10 +22,10 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="启用">
+      <el-form-item label="自动翻译">
         <el-button-group>
           <el-switch
-            :value="poeVelaL10n.state.preference.enableTranslation"
+            :model-value="poeVelaL10n.state.preference.enableTranslation"
             @change="handleEnableTranslationChange"
           >
           </el-switch>
@@ -102,6 +107,10 @@ const handleEnableTranslationChange = () => {
   poeVelaL10n.actions.updatePreference({
     enableTranslation: !poeVelaL10n.state.preference.enableTranslation,
   })
+}
+
+const handleLanguageChange = (language: LanguageIdentities) => {
+  poeVelaL10n.actions.updatePreference({language: language})
 }
 
 </script>

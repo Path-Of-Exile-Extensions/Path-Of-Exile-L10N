@@ -20,25 +20,29 @@ import {ExtMessagesIdentities} from "@/classifed/ext-messages";
 const poeVelaL10n = usePoeVelaL10n();
 
 onMounted(() => {
-  Ext.send.message({identify: ExtMessagesIdentities.GetPreference, direction: ExtMessageDirections.Runtime})
-  Ext.on.message(message => {
-    console.log("popup on message", message);
-    // switch (message.identify) {
-    //   case BuiltInExtMessageIdentities.ContentScriptReadyResponse:
-    //     poeVelaL10n.actions.initial(message.payload)
-    //     break;
-    //   case ExtMessagesIdentities.OnPreferenceChanged:
-    //     poeVelaL10n.actions.updatePreference(message.payload)
-    //     break;
-    // }
-
-    return undefined;
+  Ext.send.message({
+    identify: ExtMessagesIdentities.GetPreference,
+    direction: ExtMessageDirections.Runtime,
+    resDirection: ExtMessageDirections.Runtime,
   })
+  // Ext.on.message(message => {
+  //   console.log("popup on message", message);
+  //   // switch (message.identify) {
+  //   //   case BuiltInExtMessageIdentities.ContentScriptReadyResponse:
+  //   //     poeVelaL10n.actions.initial(message.payload)
+  //   //     break;
+  //   //   case ExtMessagesIdentities.OnPreferenceChanged:
+  //   //     poeVelaL10n.actions.updatePreference(message.payload)
+  //   //     break;
+  //   // }
+  //
+  //   return undefined;
+  // })
   Ext.on.response(message => {
     console.log("popup on response", message);
     switch (message.identify) {
       case ExtMessagesIdentities.GetPreference:
-        poeVelaL10n.actions.updatePreference(message.payload)
+        poeVelaL10n.actions.setPreference(message.payload)
         break;
     }
     return Promise.resolve();

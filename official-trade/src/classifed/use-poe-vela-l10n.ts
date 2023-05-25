@@ -40,6 +40,20 @@ export default defineStore('poe-vela-l10n', () => {
     },
 
     /**
+     * 仅更新用户偏好
+     * @param preference
+     */
+    async setPreference(preference: Partial<PreferenceEntity>) {
+      const newPreference = {
+        ...state.preference,
+        ...preference,
+      }
+
+      state.preference = newPreference;
+      console.log("popup.ts setPreference", state.preference)
+    },
+
+    /**
      * 更新用户偏好, 然后同步到本地
      * @param preference
      */
@@ -54,6 +68,7 @@ export default defineStore('poe-vela-l10n', () => {
           identify: ExtMessagesIdentities.UpdatePreference,
           payload: newPreference,
           direction: ExtMessageDirections.Runtime,
+          resDirection: ExtMessageDirections.Runtime,
         },
       )
 
@@ -67,10 +82,3 @@ export default defineStore('poe-vela-l10n', () => {
     actions,
   }
 })
-
-// export default () => {
-//   return {
-//     state,
-//     actions,
-//   };
-// }

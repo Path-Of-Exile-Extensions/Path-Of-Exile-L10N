@@ -13,7 +13,7 @@ import {onMounted, shallowRef, watch} from "vue";
 import {
   AssetVendor,
   AssetVendorMinimizeModel,
-  BuiltInExtMessageIdentities,
+  BuiltInExtMessageIdentities, delay,
   Ext,
   ExtMessageDirections
 } from "@poe-vela/core";
@@ -24,23 +24,6 @@ import {useElementVirtualRef} from "@/classifed/use-element-virtual-ref";
 const poeVelaL10n = usePoeVelaL10n();
 
 const elementVirtualRef = useElementVirtualRef();
-
-const patch = () => {
-  const tradeEl = document.querySelector("#trade")!
-  const navigationEl = tradeEl.querySelector(".navigation")!
-  const searchAdvanced = tradeEl.querySelector(".search-bar.search-advanced")!
-  const allTitles: HTMLElement[] = Array.from(searchAdvanced.querySelectorAll(".filter-title"))
-  allTitles.forEach(el => {
-    const us = el.innerText.trim()
-    const character = CharacterService.Instance.findATranslation(us)
-    if (character) {
-      el.dataset["poel10n"] = character.c
-      elementVirtualRef.observer(el)
-    } else {
-
-    }
-  })
-}
 
 let tradeEl: Element | null = null;
 const assets = shallowRef<Record<string, AssetVendor>>({})
@@ -90,8 +73,7 @@ const test = () => {
     })
 }
 
-onMounted(() => {
-  console.log("走到这里")
+onMounted(async () => {
   Ext.on.response(message => {
     console.log("content script 收到响应", message)
     switch (message.identify) {
@@ -105,17 +87,20 @@ onMounted(() => {
 
     return Promise.resolve();
   })
+  Ext.on.message(message => {
+    console.log("content script 收到消息", message)
+  })
 
   Ext.send.message({
     identify: BuiltInExtMessageIdentities.ContentScriptReady,
     direction: ExtMessageDirections.Runtime,
+    resDirection: ExtMessageDirections.Tab,
   })
 })
 
 watch(() => poeVelaL10n.state.preference, (state) => {
   state.enableTranslation && test()
 })
-
 
 </script>
 <style scoped>

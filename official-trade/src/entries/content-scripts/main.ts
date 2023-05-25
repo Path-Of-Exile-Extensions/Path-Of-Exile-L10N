@@ -18,7 +18,7 @@ function inject() {
 
 timer = setInterval(() => {
   const loaderEL = document.querySelector("#trade .loader")! as HTMLElement;
-  if (loaderEL.style.display === 'none') {
+  if (loaderEL && loaderEL.style.display === 'none') {
     inject();
     clearInterval(timer)
   }
