@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-/// <reference types="chrome-types" />
+/// <reference types="@samrum/vite-plugin-web-extension/client" />
 
 interface ImportMetaEnv {
 

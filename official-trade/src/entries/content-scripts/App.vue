@@ -10,8 +10,6 @@
 <script setup lang="ts">
 import {CharacterService} from "@poe-vela/l10n-ext";
 import {onMounted, shallowRef, watch} from "vue";
-import {useElementVirtualRef} from "../classifed/use-element-virtual-ref";
-import usePoeVelaL10n from "../classifed/use-poe-vela-l10n";
 import {
   AssetVendor,
   AssetVendorMinimizeModel,
@@ -20,7 +18,8 @@ import {
   ExtMessageDirections
 } from "@poe-vela/core";
 import {useDebounceFn} from "@vueuse/core";
-import {ExtMessagesIdentities} from "../classifed/ext-messages";
+import usePoeVelaL10n from "../../classifed/use-poe-vela-l10n";
+import {useElementVirtualRef} from "../../classifed/use-element-virtual-ref";
 
 const poeVelaL10n = usePoeVelaL10n();
 
@@ -101,14 +100,14 @@ onMounted(() => {
 
   Ext.on.message(message => {
     console.log("content script 收到消息", message)
-    switch (message.identify) {
-      case BuiltInExtMessageIdentities.ContentScriptReadyResponse:
-        poeVelaL10n.actions.initial(message.payload)
-        break;
-      case ExtMessagesIdentities.OnPreferenceChanged:
-        poeVelaL10n.actions.updatePreference(message.payload)
-        break;
-    }
+    // switch (message.identify) {
+    //   case BuiltInExtMessageIdentities.ContentScriptReadyResponse:
+    //     poeVelaL10n.actions.initial(message.payload)
+    //     break;
+    //   case ExtMessagesIdentities.OnPreferenceChanged:
+    //     poeVelaL10n.actions.updatePreference(message.payload)
+    //     break;
+    // }
   })
 })
 
