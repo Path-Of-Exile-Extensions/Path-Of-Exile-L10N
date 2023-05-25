@@ -1,5 +1,5 @@
 import browser from "webextension-polyfill";
-import {AppEnv} from "../../app-env";
+import {AppEnv} from "@/app-env";
 
 export default async function renderContent(
   cssPaths: string[],

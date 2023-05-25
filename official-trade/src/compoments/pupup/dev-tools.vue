@@ -6,7 +6,7 @@
   </el-button-group>
 </template>
 <script setup lang="ts">
-import {ExtMessagesIdentities} from "../../classifed/ext-messages";
+import {ExtMessagesIdentities} from "@/classifed/ext-messages";
 import {BuiltInExtMessageIdentities, Ext, ExtMessageDirections} from "@poe-vela/core";
 import {onMounted, reactive} from "vue";
 
@@ -29,22 +29,13 @@ onMounted(() => {
 const handleEvent = (messageId: ExtMessagesIdentities) => {
   switch (messageId) {
     case ExtMessagesIdentities.UpdateAssets:
-      Ext.send.message(
-        {identify: messageId},
-        ExtMessageDirections.Tab,
-      );
+      Ext.send.message({identify: messageId, direction: ExtMessageDirections.Tab},);
       break;
     case ExtMessagesIdentities.ClearAssets:
-      Ext.send.message(
-        {identify: messageId},
-        ExtMessageDirections.Tab,
-      );
+      Ext.send.message({identify: messageId, direction: ExtMessageDirections.Tab},);
       break;
     case ExtMessagesIdentities.Reload:
-      Ext.send.message(
-        {identify: messageId},
-        ExtMessageDirections.Runtime,
-      );
+      Ext.send.message({identify: messageId, direction: ExtMessageDirections.Runtime},);
       Ext.reload.tabs();
       break;
   }

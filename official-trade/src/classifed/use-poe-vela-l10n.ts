@@ -53,10 +53,12 @@ export default defineStore('poe-vela-l10n', () => {
         {
           identify: ExtMessagesIdentities.UpdatePreference,
           payload: newPreference,
+          direction: ExtMessageDirections.Runtime,
         },
-        ExtMessageDirections.Runtime
       )
+
       state.preference = newPreference;
+      console.log("popup.ts updatePreference", state.preference)
     }
   }
 

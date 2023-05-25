@@ -17,17 +17,13 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="操作">
+      <el-form-item label="启用">
         <el-button-group>
           <el-switch
-            active-text="应用"
-            inactive-text="禁用"
             :value="poeVelaL10n.state.preference.enableTranslation"
             @change="handleEnableTranslationChange"
           >
           </el-switch>
-          <el-button @click="handleTranslate">应用</el-button>
-          <el-button>更新资产</el-button>
         </el-button-group>
       </el-form-item>
       <el-form-item label="Join US">
@@ -86,9 +82,9 @@
 </template>
 <script setup lang="ts">
 import {Ext, ExtMessageDirections, LanguageIdentities} from "@poe-vela/core";
-import {ExtMessagesIdentities} from "../../classifed/ext-messages";
+import {ExtMessagesIdentities} from "@/classifed/ext-messages";
 import {reactive} from "vue";
-import usePOEVelaL10n from "../../classifed/use-poe-vela-l10n";
+import usePOEVelaL10n from "@/classifed/use-poe-vela-l10n";
 
 const poeVelaL10n = usePOEVelaL10n()
 
@@ -98,8 +94,7 @@ const form = reactive({
 
 const handleTranslate = () => {
   Ext.send.message(
-    {identify: ExtMessagesIdentities.Translate},
-    ExtMessageDirections.Tab,
+    {identify: ExtMessagesIdentities.Translate, direction: ExtMessageDirections.Tab},
   );
 }
 

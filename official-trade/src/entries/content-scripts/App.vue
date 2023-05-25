@@ -18,8 +18,8 @@ import {
   ExtMessageDirections
 } from "@poe-vela/core";
 import {useDebounceFn} from "@vueuse/core";
-import usePoeVelaL10n from "../../classifed/use-poe-vela-l10n";
-import {useElementVirtualRef} from "../../classifed/use-element-virtual-ref";
+import usePoeVelaL10n from "@/classifed/use-poe-vela-l10n";
+import {useElementVirtualRef} from "@/classifed/use-element-virtual-ref";
 
 const poeVelaL10n = usePoeVelaL10n();
 
@@ -91,23 +91,24 @@ const test = () => {
 }
 
 onMounted(() => {
-  Ext.send.message(
-    {
-      identify: BuiltInExtMessageIdentities.ContentScriptReady,
-    },
-    ExtMessageDirections.Runtime,
-  )
+  console.log("走到这里")
+  Ext.on.response(message => {
+    console.log("content script 收到响应", message)
+    switch (message.identify) {
+      case BuiltInExtMessageIdentities.ContentScriptReady:
+        poeVelaL10n.actions.initial(message.payload)
+        break;
+      // case ExtMessagesIdentities.OnPreferenceChanged:
+      //   poeVelaL10n.actions.updatePreference(message.payload)
+      //   break;
+    }
 
-  Ext.on.message(message => {
-    console.log("content script 收到消息", message)
-    // switch (message.identify) {
-    //   case BuiltInExtMessageIdentities.ContentScriptReadyResponse:
-    //     poeVelaL10n.actions.initial(message.payload)
-    //     break;
-    //   case ExtMessagesIdentities.OnPreferenceChanged:
-    //     poeVelaL10n.actions.updatePreference(message.payload)
-    //     break;
-    // }
+    return Promise.resolve();
+  })
+
+  Ext.send.message({
+    identify: BuiltInExtMessageIdentities.ContentScriptReady,
+    direction: ExtMessageDirections.Runtime,
   })
 })
 

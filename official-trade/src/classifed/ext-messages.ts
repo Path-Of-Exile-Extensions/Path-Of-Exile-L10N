@@ -3,5 +3,6 @@ export enum ExtMessagesIdentities {
   "UpdateAssets" = "UpdateAssets",
   "ClearAssets" = "ClearAssets",
   "Reload" = "Reload",
-  "UpdatePreference" = "UpdatePreference"
+  "UpdatePreference" = "UpdatePreference",
+  "GetPreference" = "GetPreference",
 }

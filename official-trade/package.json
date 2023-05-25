@@ -32,7 +32,7 @@
     "unplugin-auto-import": "^0.16.2",
     "@crxjs/vite-plugin": "2.0.0-beta.17",
     "@types/webextension-polyfill": "^0.10.0",
-    "@samrum/vite-plugin-web-extension": "^4.1.0",
+    "@samrum/vite-plugin-web-extension": "https://github.com/samrum/vite-plugin-web-extension",
     "@types/chrome": "^0.0.236",
     "web-ext": "^7.6.2"
   },
