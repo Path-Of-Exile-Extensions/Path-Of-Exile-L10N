@@ -16,21 +16,24 @@ async function initialize() {
   isInitialized = true;
 }
 
-Ext.on.message(async (message, sender) => {
+Ext.on.message(async (message) => {
+  console.log("background.ts: on.message", message)
   if (!isInitialized) {
     await initialize();
   }
   switch (message.identify) {
     case BuiltInExtMessageIdentities.ContentScriptReady:
-      return {
+      return Promise.resolve({
         preference: PreferenceService.Instance.preference,
-      }
+      })
     case ExtMessagesIdentities.UpdatePreference:
       await PreferenceService.Instance.upsert(message.payload);
       return undefined;
     case ExtMessagesIdentities.GetPreference:
-      return PreferenceService.Instance.preference;
+      return Promise.resolve(PreferenceService.Instance.preference);
+    case ExtMessagesIdentities.Reload:
+      chrome.runtime.reload()
   }
 
-  return 1;
+  return undefined;
 })

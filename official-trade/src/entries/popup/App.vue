@@ -1,14 +1,11 @@
 <template>
-  <el-config-provider>
-    <div class="flex flex-col px-[10px] py-[15px] w-[300px]">
-      <main-panel/>
-      <dev-tools v-if="AppEnv.IsDev"/>
-    </div>
-  </el-config-provider>
+  <div class="flex flex-col px-[10px] py-[15px] w-[300px]">
+    <main-panel/>
+    <dev-tools v-if="AppEnv.IsDev"/>
+  </div>
 </template>
 
 <script setup lang="ts">
-import "./styles/popup.css"
 import {onMounted} from "vue";
 import {Ext, ExtMessageDirections} from "@poe-vela/core/ext";
 import usePoeVelaL10n from "../../classifed/use-poe-vela-l10n";
@@ -20,24 +17,12 @@ import {ExtMessagesIdentities} from "@/classifed/ext-messages";
 const poeVelaL10n = usePoeVelaL10n();
 
 onMounted(() => {
+  console.log("popup on mounted")
   Ext.send.message({
     identify: ExtMessagesIdentities.GetPreference,
     direction: ExtMessageDirections.Runtime,
     resDirection: ExtMessageDirections.Runtime,
   })
-  // Ext.on.message(message => {
-  //   console.log("popup on message", message);
-  //   // switch (message.identify) {
-  //   //   case BuiltInExtMessageIdentities.ContentScriptReadyResponse:
-  //   //     poeVelaL10n.actions.initial(message.payload)
-  //   //     break;
-  //   //   case ExtMessagesIdentities.OnPreferenceChanged:
-  //   //     poeVelaL10n.actions.updatePreference(message.payload)
-  //   //     break;
-  //   // }
-  //
-  //   return undefined;
-  // })
   Ext.on.response(message => {
     console.log("popup on response", message);
     switch (message.identify) {
@@ -45,7 +30,9 @@ onMounted(() => {
         poeVelaL10n.actions.setPreference(message.payload)
         break;
     }
-    return Promise.resolve();
+  })
+  Ext.on.message(message => {
+    console.log("popup on message", message);
   })
 })
 

@@ -1,7 +1,9 @@
 import {createApp} from "vue";
 import App from "./App.vue";
-import elementPlus from "@/compoments/element-plus";
+import appPlugins from "@/compoments/app-plugins";
+import {createPinia} from "pinia";
 
 const app = createApp(App)
-app.use(elementPlus)
+app.use(appPlugins)
+app.use(createPinia())
 app.mount("#app");
