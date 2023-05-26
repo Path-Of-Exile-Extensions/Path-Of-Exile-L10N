@@ -2,6 +2,7 @@ import {createApp} from "vue";
 import App from "./App.vue";
 import {createPinia} from 'pinia'
 import renderContent from "./render-content";
+import elementPlus from "@/compoments/element-plus";
 
 let timer: any
 
@@ -10,6 +11,7 @@ function inject() {
     import.meta.PLUGIN_WEB_EXT_CHUNK_CSS_PATHS,
     appRoot => {
       const app = createApp(App)
+      app.use(elementPlus)
       app.use(createPinia())
       app.mount(appRoot);
     }

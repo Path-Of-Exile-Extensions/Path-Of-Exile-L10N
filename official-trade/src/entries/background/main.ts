@@ -1,5 +1,5 @@
 import browser from "webextension-polyfill";
-import {BuiltInExtMessageIdentities, Ext, ExtMessage} from "@poe-vela/core/ext";
+import {BuiltInExtMessageIdentities, Ext} from "@poe-vela/core/ext";
 import {DB, PreferenceService} from "@poe-vela/l10n-ext";
 import {ExtMessagesIdentities} from "@/classifed/ext-messages";
 

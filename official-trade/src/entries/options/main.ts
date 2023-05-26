@@ -1,4 +1,7 @@
-import { createApp } from "vue";
+import {createApp} from "vue";
 import App from "./App.vue";
+import elementPlus from "@/compoments/element-plus";
 
-createApp(App).mount("#app");
+const app = createApp(App)
+app.use(elementPlus)
+app.mount("#app");
