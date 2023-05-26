@@ -86,7 +86,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import {Ext, ExtMessageDirections, LanguageIdentities} from "@poe-vela/core";
+import {LanguageIdentities} from "@poe-vela/core";
+import {Ext, ExtMessageDirections} from "@poe-vela/core/ext";
 import {ExtMessagesIdentities} from "@/classifed/ext-messages";
 import {reactive} from "vue";
 import usePOEVelaL10n from "@/classifed/use-poe-vela-l10n";

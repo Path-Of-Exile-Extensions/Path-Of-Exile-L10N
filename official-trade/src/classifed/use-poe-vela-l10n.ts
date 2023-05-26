@@ -1,6 +1,6 @@
 import {reactive} from 'vue'
 import {PreferenceEntity, PreferenceEntityDefault} from "@poe-vela/l10n-ext";
-import {Ext, ExtMessageDirections} from "@poe-vela/core";
+import {Ext, ExtMessageDirections} from "@poe-vela/core/ext";
 import {ExtMessagesIdentities} from "./ext-messages";
 import {defineStore} from "pinia";
 

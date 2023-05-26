@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import "./styles/popup.css"
 import {onMounted} from "vue";
-import {BuiltInExtMessageIdentities, Ext, ExtMessageDirections} from "@poe-vela/core";
+import {Ext, ExtMessageDirections} from "@poe-vela/core/ext";
 import usePoeVelaL10n from "../../classifed/use-poe-vela-l10n";
 import {AppEnv} from "../../app-env";
 import MainPanel from "../../compoments/pupup/main-panel.vue";

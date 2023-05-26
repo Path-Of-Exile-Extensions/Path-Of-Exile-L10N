@@ -8,15 +8,19 @@
   />
 </template>
 <script setup lang="ts">
-import {CharacterService} from "@poe-vela/l10n-ext";
 import {onMounted, shallowRef, watch} from "vue";
 import {
   AssetVendor,
   AssetVendorMinimizeModel,
-  BuiltInExtMessageIdentities, delay,
-  Ext,
-  ExtMessageDirections
+  delay,
 } from "@poe-vela/core";
+import {
+  Ext,
+  ExtMessageDirections,
+  BuiltInExtMessageIdentities,
+  TradeController,
+  MenuType,
+} from "@poe-vela/core/ext";
 import {useDebounceFn} from "@vueuse/core";
 import usePoeVelaL10n from "@/classifed/use-poe-vela-l10n";
 import {useElementVirtualRef} from "@/classifed/use-element-virtual-ref";
@@ -24,6 +28,8 @@ import {useElementVirtualRef} from "@/classifed/use-element-virtual-ref";
 const poeVelaL10n = usePoeVelaL10n();
 
 const elementVirtualRef = useElementVirtualRef();
+
+const tradeController = new TradeController()
 
 let tradeEl: Element | null = null;
 const assets = shallowRef<Record<string, AssetVendor>>({})
@@ -45,7 +51,23 @@ const main = useDebounceFn(() => {
     })
 }, 50)
 
-const test = () => {
+const exchange = () => {
+  fetch(`https://raw.githubusercontent.com/Path-Of-Exile-Vela/L10N-Assets/master/full.json`)
+    .then(res => res.json())
+    .then(res => {
+      tradeEl = document.querySelector("#trade")!
+      const el = tradeEl.querySelector(".search-bar.search-advanced");
+      const optionsELs = el.querySelector(".filter .filter-options")
+      Array.from(optionsELs.childNodes)
+        .forEach((optionsEL: HTMLDivElement) => {
+          const oldTitle = optionsEL.title
+          optionsEL.title = res[oldTitle] || `No Title (${optionsEL.title})`
+        })
+
+    })
+}
+
+const search = () => {
   fetch(`https://raw.githubusercontent.com/Path-Of-Exile-Vela/L10N-Assets/master/test.json`)
     .then(res => res.json())
     .then(res => {
@@ -73,7 +95,22 @@ const test = () => {
     })
 }
 
+const test = () => {
+  switch (tradeController.menuType) {
+    case MenuType.Search:
+      search()
+      break;
+    case MenuType.Exchange:
+      exchange();
+      break;
+  }
+}
+
 onMounted(async () => {
+  await tradeController.initialize()
+  setTimeout(() => {
+    exchange();
+  }, 5000)
   Ext.on.response(message => {
     console.log("content script 收到响应", message)
     switch (message.identify) {
