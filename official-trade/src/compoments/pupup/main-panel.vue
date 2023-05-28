@@ -37,23 +37,10 @@
 </template>
 <script setup lang="ts">
 import {LanguageIdentities} from "@poe-vela/core";
-import {Ext, ExtMessageDirections} from "@poe-vela/core/ext";
-import {ExtMessagesIdentities} from "@/classifed/ext-messages";
-import {reactive} from "vue";
 import usePOEVelaL10n from "@/classifed/use-poe-vela-l10n";
 import {PreferenceEntity} from "@poe-vela/l10n-ext";
 
 const poeVelaL10n = usePOEVelaL10n()
-
-const form = reactive({
-  language: LanguageIdentities["zh-Hans"],
-})
-
-const handleTranslate = () => {
-  Ext.send.message(
-    {identify: ExtMessagesIdentities.Translate, direction: ExtMessageDirections.Tab},
-  );
-}
 
 const handleEnableTranslationChange = () => {
   poeVelaL10n.actions.updatePreference({

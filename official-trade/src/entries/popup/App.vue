@@ -6,34 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted} from "vue";
-import {Ext, ExtMessageDirections} from "@poe-vela/core/ext";
-import usePoeVelaL10n from "../../classifed/use-poe-vela-l10n";
 import {AppEnv} from "../../app-env";
 import MainPanel from "../../compoments/pupup/main-panel.vue";
 import DevTools from "../../compoments/pupup/dev-tools.vue";
-import {ExtMessagesIdentities} from "@/classifed/ext-messages";
-
-const poeVelaL10n = usePoeVelaL10n();
-
-onMounted(() => {
-  console.log("popup on mounted")
-  Ext.send.message({
-    identify: ExtMessagesIdentities.GetPreference,
-    direction: ExtMessageDirections.Runtime,
-    resDirection: ExtMessageDirections.Runtime,
-  })
-  Ext.on.response(message => {
-    console.log("popup on response", message);
-    switch (message.identify) {
-      case ExtMessagesIdentities.GetPreference:
-        poeVelaL10n.actions.setPreference(message.payload)
-        break;
-    }
-  })
-  Ext.on.message(message => {
-    console.log("popup on message", message);
-  })
-})
-
 </script>

@@ -9,21 +9,13 @@
 </template>
 <script setup lang="ts">
 import {onMounted, shallowRef, watch} from "vue";
-import {
-  AssetVendor,
-  AssetVendorMinimizeModel,
-  delay,
-} from "@poe-vela/core";
-import {
-  Ext,
-  ExtMessageDirections,
-  BuiltInExtMessageIdentities,
-  TradeController,
-  MenuType,
-} from "@poe-vela/core/ext";
+import {AssetVendor, AssetVendorMinimizeModel,} from "@poe-vela/core";
+import {BuiltInExtMessageIdentities, Ext, ExtMessageDirections, MenuType, TradeController,} from "@poe-vela/core/ext";
 import {useDebounceFn} from "@vueuse/core";
 import usePoeVelaL10n from "@/classifed/use-poe-vela-l10n";
 import {useElementVirtualRef} from "@/classifed/use-element-virtual-ref";
+import {PalmCivetService} from "@/domain/palm-civet";
+import {DB} from "@poe-vela/l10n-ext";
 
 const poeVelaL10n = usePoeVelaL10n();
 
@@ -96,6 +88,8 @@ const search = () => {
 }
 
 const test = () => {
+  PalmCivetService.Instance.substitutes();
+  return
   switch (tradeController.menuType) {
     case MenuType.Search:
       search()
@@ -107,25 +101,17 @@ const test = () => {
 }
 
 onMounted(async () => {
+  await DB.Instance.initialize()
   await tradeController.initialize()
-  setTimeout(() => {
-    exchange();
-  }, 5000)
+  await PalmCivetService.Instance.initialize()
+  await PalmCivetService.Instance.update()
   Ext.on.response(message => {
     console.log("content script 收到响应", message)
     switch (message.identify) {
-      case BuiltInExtMessageIdentities.ContentScriptReady:
-        poeVelaL10n.actions.initial(message.payload)
-        break;
-      // case ExtMessagesIdentities.OnPreferenceChanged:
-      //   poeVelaL10n.actions.updatePreference(message.payload)
-      //   break;
+
     }
 
     return Promise.resolve();
-  })
-  Ext.on.message(message => {
-    console.log("content script 收到消息", message)
   })
 
   Ext.send.message({

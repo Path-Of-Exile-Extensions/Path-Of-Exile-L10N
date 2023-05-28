@@ -1,8 +1,9 @@
-import {reactive} from 'vue'
+import {getCurrentInstance, onMounted, reactive} from 'vue'
 import {PreferenceEntity, PreferenceEntityDefault} from "@poe-vela/l10n-ext";
 import {Ext, ExtMessageDirections} from "@poe-vela/core/ext";
 import {ExtMessagesIdentities} from "./ext-messages";
 import {defineStore} from "pinia";
+import {AppEnv} from "@/app-env";
 
 export type POEL10NViewState = {
   // 是否在初始化用户偏好中
@@ -30,27 +31,13 @@ export default defineStore('poe-vela-l10n', () => {
   })
 
   const actions = {
-    // 获得字符串对象
-    async findATranslation(usString: string) {
-      return "";
-    },
-
-    initial({preference}: { preference: PreferenceEntity }) {
-      state.preference = preference;
-    },
-
-    /**
-     * 仅更新用户偏好
-     * @param preference
-     */
-    async setPreference(preference: Partial<PreferenceEntity>) {
-      const newPreference = {
-        ...state.preference,
-        ...preference,
+    initial(_state: { preference: PreferenceEntity }) {
+      if (_state.preference) {
+        state.preference = {
+          ...state.preference,
+          ..._state.preference,
+        };
       }
-
-      state.preference = newPreference;
-      console.log("popup.ts setPreference", state.preference)
     },
 
     /**
@@ -63,7 +50,7 @@ export default defineStore('poe-vela-l10n', () => {
         ...preference,
       }
 
-      await Ext.send.message(
+      Ext.send.message(
         {
           identify: ExtMessagesIdentities.UpdatePreference,
           payload: newPreference,
@@ -73,8 +60,36 @@ export default defineStore('poe-vela-l10n', () => {
       )
 
       state.preference = newPreference;
-      console.log("popup.ts updatePreference", state.preference)
+      console.log("updatePreference", state.preference)
     }
+  }
+
+  if (getCurrentInstance()) {
+    onMounted(async () => {
+      if (AppEnv.IsContentScript) {
+        Ext.send.message({
+          identify: ExtMessagesIdentities.Initialize,
+          direction: ExtMessageDirections.Runtime,
+          resDirection: ExtMessageDirections.Tab,
+        })
+      } else {
+        Ext.send.message({
+          identify: ExtMessagesIdentities.Initialize,
+          direction: ExtMessageDirections.Runtime,
+          resDirection: ExtMessageDirections.Runtime,
+        })
+      }
+
+      Ext.on.message(message => {
+        console.log("poe-vela-l10n.ts: on.message", message)
+        switch (message.identify) {
+          case ExtMessagesIdentities.Initialize:
+          case ExtMessagesIdentities.ReInitialize:
+            actions.initial(message.payload)
+            break;
+        }
+      })
+    })
   }
 
   return {

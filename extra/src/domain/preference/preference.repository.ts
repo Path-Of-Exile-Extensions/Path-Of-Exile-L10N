@@ -1,19 +1,15 @@
-import {RepositoryBase} from "../../atomic";
-import {DB} from "../../driver";
 import {PreferenceSchemaLiteral} from "./preference.schema";
 import {PreferenceEntity} from "./preference.entity";
-import {RxDatabase} from "rxdb";
+import {RxRepositoryBase} from "../../atomic/rx-repository";
 
-const Identifier = "preference" as const
-
-export class PreferenceRepository extends RepositoryBase<PreferenceEntity> {
-  get database(): RxDatabase {
-    return DB.Instance.driver;
+export class PreferenceRepository extends RxRepositoryBase<PreferenceEntity> {
+  get dbName(): string {
+    return "preference";
   }
 
   async initialize(): Promise<any> {
     await this.database.addCollections({
-      [Identifier]: {
+      [this.dbName]: {
         schema: PreferenceSchemaLiteral
       },
     });
@@ -24,7 +20,7 @@ export class PreferenceRepository extends RepositoryBase<PreferenceEntity> {
    * 读取第一条数据
    */
   get(): Promise<PreferenceEntity | null> {
-    return this.database[Identifier].findOne().exec().then(res => res?.toJSON())
+    return this.findOne();
   }
 
   /**
@@ -32,7 +28,7 @@ export class PreferenceRepository extends RepositoryBase<PreferenceEntity> {
    */
   upsert(struct: PreferenceEntity): Promise<null> {
     struct.id = "1";
-    return this.database[Identifier].upsert(struct)
+    return this.database[this.dbName].upsert(struct)
   }
 
   /**
@@ -40,7 +36,7 @@ export class PreferenceRepository extends RepositoryBase<PreferenceEntity> {
    */
   async create(struct: PreferenceEntity): Promise<PreferenceEntity> {
     struct.id = "1";
-    await this.database[Identifier].insert(struct)
+    await this.database[this.dbName].insert(struct)
     return Promise.resolve(struct);
   }
 
@@ -48,7 +44,7 @@ export class PreferenceRepository extends RepositoryBase<PreferenceEntity> {
    * 删除
    */
   async delete(): Promise<null> {
-    const result = this.database[Identifier].find({
+    const result = this.database[this.dbName].find({
       selector: {
         id: "1"
       }
