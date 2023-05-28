@@ -12,7 +12,6 @@ export abstract class RxRepositoryBase<T> extends RepositoryBase<T> {
     return this.database[this.dbName].findOne().exec().then(res => res?.toJSON())
   }
 
-
   insert(struct: T): Promise<void> {
     return this.database[this.dbName].insert(struct)
   }

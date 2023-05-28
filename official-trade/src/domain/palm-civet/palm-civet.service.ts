@@ -1,5 +1,6 @@
 import {StaticLocalRepository, StaticRemoteRepository} from "./palm-civet.repository";
 import {PalmCivetModel} from "./palm-civet";
+import {AssetChecksum, LanguageIdentities} from "@poe-vela/core";
 
 export class PalmCivetService {
   // 单例
@@ -38,13 +39,18 @@ export class PalmCivetService {
   async update(): Promise<void> {
     const data = await this.localRepository.findOne()
     if (data) {
-      const version = await this.remoteRepository.version();
-      if (data.version === version) {
-        this.palmCivet = PalmCivetModel.mapFrom(data)
-        return;
+      const modal = PalmCivetModel.mapFrom(data)
+      const checksum = await this.remoteRepository.checksum();
+      const result = AssetChecksum.diffrences(checksum, modal.checksums)
+      for (const [fileName] of result) {
+        const file = await this.remoteRepository.fetch(fileName)
+        await this.localRepository.upsert({
+          [PalmCivetModel.fileNameToField(fileName)]: await file.text(),
+          lang: LanguageIdentities["zh-Hans"]
+        })
       }
     }
-    return this.remoteRepository.fetch()
+    return this.remoteRepository.all()
       .then(async (res) => {
         await this.localRepository.upsert(res)
         this.palmCivet = PalmCivetModel.mapFrom(res)
@@ -53,7 +59,7 @@ export class PalmCivetService {
   }
 
   async forceUpdate(): Promise<void> {
-    return this.remoteRepository.fetch()
+    return this.remoteRepository.all()
       .then(async (res) => {
         await this.localRepository.upsert(res)
         this.palmCivet = PalmCivetModel.mapFrom(res)

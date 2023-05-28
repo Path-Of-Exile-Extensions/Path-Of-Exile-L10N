@@ -1,7 +1,7 @@
 import {RepositoryBase, RxRepositoryBase} from "@poe-vela/l10n-ext";
 import {PalmCivetSchemaLiteral} from "./palm-civet.schema";
-import {PalmCivet} from './palm-civet'
-import {LanguageIdentities} from "@poe-vela/core";
+import {getPalmCivetFileNames, PalmCivet} from './palm-civet'
+import {AssetChecksum, LanguageIdentities} from "@poe-vela/core";
 
 export class StaticLocalRepository extends RxRepositoryBase<PalmCivet> {
   get dbName() {
@@ -19,33 +19,38 @@ export class StaticLocalRepository extends RxRepositoryBase<PalmCivet> {
 
 }
 
-export class StaticRemoteRepository extends RepositoryBase<PalmCivet> {
-  fetch(): Promise<PalmCivet> {
-    const base = "https://raw.githubusercontent.com/Path-Of-Exile-Vela/L10N-Assets/master/"
+const base = "https://raw.githubusercontent.com/Path-Of-Exile-Vela/L10N-Assets/master/"
 
+export class StaticRemoteRepository extends RepositoryBase<PalmCivet> {
+  all(): Promise<PalmCivet> {
     return Promise
-      .all([
-        fetch(base + `version.txt`, {cache: "no-cache"}),
-        fetch(base + `items.min.json`, {cache: "no-cache"}),
-        fetch(base + `stats.min.json`, {cache: "no-cache"}),
-        fetch(base + `static.min.json`, {cache: "no-cache"}),
-      ])
+      .all(
+        getPalmCivetFileNames(LanguageIdentities["zh-Hans"])
+          .map(fileName => fetch(base + fileName, {cache: "no-store"}))
+      )
       .then(res => Promise.all(res.map(i => i.text())))
-      .then(([version, items, stats, _static]) => {
+      .then(([checksums, common, items,_static, stats, statsFlat, menuSearch]) => {
         return {
-          version: version.trim(),
-          items: items,
+          checksums,
+          common,
+          items,
           static: _static,
-          stats: stats,
-          language: LanguageIdentities["zh-Hans"],
+          stats,
+          statsFlat,
+          menuSearch,
+          lang: LanguageIdentities["zh-Hans"]
         }
       })
   }
 
-  version(): Promise<string> {
+  fetch(fileName: string) {
+    return fetch(base + fileName, {cache: "no-store"})
+  }
+
+  checksum(): Promise<AssetChecksum[]> {
     const base = "https://raw.githubusercontent.com/Path-Of-Exile-Vela/L10N-Assets/master/"
-    return fetch(base + `version.txt`, {cache: "no-cache"}).then(res => res.text())
-      .then(res => res.trim())
+    return fetch(base + `checksums.zh-Hans.json`, {cache: "no-store"})
+      .then(res => res.json())
   }
 
   initialize(): Promise<void> {

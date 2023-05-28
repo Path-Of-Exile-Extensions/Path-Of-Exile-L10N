@@ -1,16 +1,25 @@
 import {RxJsonSchema} from "rxdb";
 import {PalmCivet} from "./palm-civet";
 
-const _CharacterSchemaLiteral = {
-  title: 'character',
+const _PalmCivetSchemaLiteral = {
+  title: 'PalmCivet',
   version: 0,
-  primaryKey: 'version',
+  primaryKey: 'lang',
   type: 'object',
   properties: {
-    // 版本号, 主键
-    version: {
+    // 语言标识, 主键
+    lang: {
       type: 'string',
-      maxLength: 20
+      maxLength: 20,
+    },
+    checksums: {
+      type: 'string',
+    },
+    common: {
+      type: 'string',
+    },
+    items: {
+      type: 'string',
     },
     static: {
       type: 'string',
@@ -18,14 +27,14 @@ const _CharacterSchemaLiteral = {
     stats: {
       type: 'string',
     },
-    items: {
+    statsFlat: {
       type: 'string',
     },
-    language: {
+    menuSearch: {
       type: 'string',
-    }
+    },
   },
-  required: ['version', 'language'],
+  required: ['lang'],
 } as const
 
-export const PalmCivetSchemaLiteral: RxJsonSchema<PalmCivet> = _CharacterSchemaLiteral;
+export const PalmCivetSchemaLiteral: RxJsonSchema<PalmCivet> = _PalmCivetSchemaLiteral;
