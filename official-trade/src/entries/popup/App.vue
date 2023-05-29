@@ -6,4 +6,6 @@
 
 <script setup lang="ts">
 import MainPanel from "../../compoments/pupup/main-panel.vue";
+import usePoeVelaL10nPopup from "@/classifed/use-poe-vela-l10n.popup";
+usePoeVelaL10nPopup();
 </script>

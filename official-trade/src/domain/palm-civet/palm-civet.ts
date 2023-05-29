@@ -72,6 +72,9 @@ export namespace PalmCivetModel {
     localStorage.removeItem("lscache-tradedata")
     localStorage.removeItem("lscache-tradeitems")
     localStorage.removeItem("lscache-tradestats")
+    localStorage.removeItem("lscache-tradedata-cacheexpiration")
+    localStorage.removeItem("lscache-tradeitems-cacheexpiration")
+    localStorage.removeItem("lscache-tradestats-cacheexpiration")
   }
 
 }

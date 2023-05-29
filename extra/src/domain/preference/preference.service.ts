@@ -52,6 +52,7 @@ export class PreferenceService {
   }
 
   deleteAll() {
+    this._preference = PreferenceEntityDefault;
     return this.preferenceRepository.deleteAll()
   }
 

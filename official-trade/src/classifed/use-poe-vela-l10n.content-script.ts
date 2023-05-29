@@ -5,6 +5,7 @@ import {defineStore} from "pinia";
 import {PreferenceEntity, PreferenceEntityDefault} from "@poe-vela/l10n-ext";
 import {PalmCivetModel} from "@/domain/palm-civet";
 import {reactive} from "vue";
+import {ElMessage} from "element-plus";
 
 export type POEVelaL10NViewState = {
   // 用户偏好
@@ -40,7 +41,6 @@ export default defineStore('poe-vela-l10n-content-script', () => {
     },
   }
 
-
   if (getCurrentInstance()) {
     onMounted(async () => {
       Ext.send.message({
@@ -58,8 +58,13 @@ export default defineStore('poe-vela-l10n-content-script', () => {
           case ExtMessagesIdentities["Preference:Changed"]:
             state.preference = message.payload;
             break;
-          case ExtMessagesIdentities["Restore"]:
+          case ExtMessagesIdentities.Restore:
             actions.restore();
+            ElMessage({
+              message: '[POE-Vela] 检测到配置项改变, 刷新页面后生效',
+              duration: 999999999,
+              showClose: true,
+            })
             break;
         }
         return undefined;
@@ -74,17 +79,23 @@ export default defineStore('poe-vela-l10n-content-script', () => {
           case ExtMessagesIdentities["PalmCivet:Get"]:
             state.palmCivet = message.payload;
             break;
+          case ExtMessagesIdentities["PalmCivet:Updated"]:
+            state.palmCivet = message.payload;
+            break;
         }
       })
     })
   }
 
-  watch(() => state.preference.enableTranslation, (enableTranslation) => {
-    console.log("poe-vela-l10n content-script: watch enableTranslation", enableTranslation)
+  watch([() => state.preference.enableTranslation, () => state.palmCivet], ([enableTranslation, palmCivet]: [boolean, (PalmCivetModel | undefined)]) => {
     if (enableTranslation) {
-      actions.GetPalmCivet();
+      if (palmCivet) {
+        PalmCivetModel.substitutes(palmCivet)
+      } else {
+        actions.GetPalmCivet();
+      }
     } else {
-      actions.recover();
+      actions.restore();
     }
   })
 

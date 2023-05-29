@@ -25,6 +25,9 @@ export abstract class RxRepositoryBase<T> extends RepositoryBase<T> {
   }
 
   deleteAll(): Promise<any> {
+    if (!this.database[this.dbName]) {
+      return Promise.resolve();
+    }
     return this.database[this.dbName].remove()
   }
 

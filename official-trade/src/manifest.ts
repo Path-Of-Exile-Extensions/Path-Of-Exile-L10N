@@ -19,6 +19,10 @@ const sharedManifest = {
       js: [
         "src/entries/content-scripts/main.ts"
       ],
+      css: [
+        // 处理 Shadow dom, 这里手动引入 element-plus 的样式
+        "src/compoments/element-ui.css"
+      ],
       run_at: "document_start"
     }
   ],

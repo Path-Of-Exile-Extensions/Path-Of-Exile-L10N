@@ -14,13 +14,14 @@ export type POEVelaL10NPopupViewState = {
   preference: PreferenceEntity
 }
 
-export default defineStore('poe-vela-l10n-popup', () => {
-  const state = reactive<POEVelaL10NPopupViewState>({
-    isUpdateAssetsResult: "none",
-    isUpdatingAssets: false,
-    preference: PreferenceEntityDefault
-  })
+const initState: POEVelaL10NPopupViewState = {
+  isUpdateAssetsResult: "none",
+  isUpdatingAssets: false,
+  preference: PreferenceEntityDefault
+}
 
+export default defineStore('poe-vela-l10n-popup', () => {
+  const state = reactive<POEVelaL10NPopupViewState>(initState)
 
   const actions = {
     initial(_state: { preference: PreferenceEntity }) {
@@ -60,8 +61,8 @@ export default defineStore('poe-vela-l10n-popup', () => {
       })
     },
     async restore() {
-      state.isUpdatingAssets = true;
-      Ext.send.borads({
+      Object.assign(state, initState)
+      Ext.send.multicast({
         identify: ExtMessagesIdentities.Restore,
         direction: ExtMessageDirections.Runtime,
       })

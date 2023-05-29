@@ -28,10 +28,9 @@ import "./styles/index.css"
 
 export default {
   /**
-   *
    * @param app {App}
    */
-  install: (app) => {
+  install: (app: App) => {
     app.use(ElButton)
     app.use(ElButtonGroup)
     app.use(ElTooltip)

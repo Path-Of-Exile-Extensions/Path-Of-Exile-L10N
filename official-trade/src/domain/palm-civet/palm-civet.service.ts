@@ -5,7 +5,7 @@ import {AssetChecksum, LanguageIdentities} from "@poe-vela/core";
 export class PalmCivetService {
   // 单例
   private static instance: PalmCivetService;
-  public palmCivet!: PalmCivetModel;
+  public palmCivet: PalmCivetModel | undefined;
 
   static get Instance(): PalmCivetService {
     if (!PalmCivetService.instance) {
@@ -33,6 +33,7 @@ export class PalmCivetService {
   }
 
   deleteAll() {
+    this.palmCivet = undefined;
     return this.localRepository.deleteAll()
   }
 
