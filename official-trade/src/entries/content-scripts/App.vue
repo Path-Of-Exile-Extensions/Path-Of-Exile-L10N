@@ -8,26 +8,39 @@
   />
 </template>
 <script setup lang="ts">
-import {onMounted, shallowRef} from "vue";
-import {AssetVendor, AssetVendorMinimizeModel,} from "@poe-vela/core";
-import {TradeController,} from "@poe-vela/core/ext";
-import {useDebounceFn} from "@vueuse/core";
+import {onMounted, shallowRef, watch} from "vue";
+import {AssetRecord, AssetVendorMinimizeModel,} from "@poe-vela/core";
+import {TradeController} from "@poe-vela/core/ext";
 import {useElementVirtualRef} from "@/classifed/use-element-virtual-ref";
 import usePoeVelaL10nContentScript from "@/classifed/use-poe-vela-l10n.content-script";
 
-usePoeVelaL10nContentScript();
+function getAllSpans(root: Element, effect: (dom: HTMLSpanElement) => void) {
+  let treeWalker = document.createTreeWalker(
+    root,
+    NodeFilter.SHOW_ELEMENT,
+    { acceptNode: (node: HTMLElement) => { return node.tagName.toLowerCase() === 'span' ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; } }
+  );
+  let currentNode = treeWalker.currentNode;
+  while (currentNode) {
+    effect(currentNode as HTMLSpanElement);
+    currentNode = treeWalker.nextNode();
+  }
+}
+
+const poeVelaL10n = usePoeVelaL10nContentScript();
 
 const elementVirtualRef = useElementVirtualRef();
 
 const tradeController = new TradeController()
 
 let tradeEl: Element | null = null;
-const assets = shallowRef<Record<string, AssetVendor>>({})
 let freezed = false;
+let assets = shallowRef({} as AssetRecord)
 
-const main = useDebounceFn(() => {
+const main = () => {
+  // const t0 = window.performance.now();
   Object.entries(assets.value)
-    .forEach(([id, asset]) => {
+    .forEach(([_, asset]) => {
       const el = tradeEl!.querySelector(asset.elCSSSelector) as HTMLElement
       if (!el) {
         throw new Error(`can not find element by selector: ${asset.elCSSSelector}`)
@@ -39,53 +52,42 @@ const main = useDebounceFn(() => {
         el.textContent = asset.localizedLiteral;
       }
     })
-}, 50)
-
-const exchange = () => {
-  fetch(`https://raw.githubusercontent.com/Path-Of-Exile-Vela/L10N-Assets/master/full.json`)
-    .then(res => res.json())
-    .then(res => {
-      tradeEl = document.querySelector("#trade")!
-      const el = tradeEl.querySelector(".search-bar.search-advanced");
-      const optionsELs = el.querySelector(".filter .filter-options")
-      Array.from(optionsELs.childNodes)
-        .forEach((optionsEL: HTMLDivElement) => {
-          const oldTitle = optionsEL.title
-          optionsEL.title = res[oldTitle] || `No Title (${optionsEL.title})`
-        })
-    })
+  // const t1 = window.performance.now();
+  // console.log("doSomething 函数执行了" + (t1 - t0) + "毫秒。")
 }
 
 const search = () => {
-  fetch(`https://raw.githubusercontent.com/Path-Of-Exile-Vela/L10N-Assets/master/test.json`)
-    .then(res => res.json())
-    .then(res => {
-      tradeEl = document.querySelector("#trade")!
-      assets.value = AssetVendorMinimizeModel.decode(res);
-      const el = tradeEl.querySelector(".search-bar.search-advanced");
-      const observer = new MutationObserver(
-        () => {
-          console.log("回调 MutationObserver")
-          if (freezed) {
-            return
-          }
-          freezed = true;
-          try {
-            main()
-          } catch (e) {
+  tradeEl = document.querySelector("#trade")!
+  assets.value = AssetVendorMinimizeModel.decode(poeVelaL10n.state.palmCivet!.menuSearch);
+  const el = tradeEl.querySelector(".search-bar.search-advanced");
+  const observer = new MutationObserver(
+    () => {
+      console.log("回调 MutationObserver")
+      if (freezed) {
+        return
+      }
+      freezed = true;
+      try {
+        main()
+      } catch (e) {
 
-          }
-          freezed = false;
-        }
-      )
-      observer.observe(el!, {childList: true})
+      }
+      freezed = false;
+    }
+  )
+  observer.observe(el!, {childList: true})
 
-      main();
-    })
+  main();
 }
 
 onMounted(async () => {
   await tradeController.initialize();
+})
+
+watch([() => poeVelaL10n.state.preference.enableTranslation, () => poeVelaL10n.state.palmCivet], ([enableTranslation, palmCivet]) => {
+  if (enableTranslation && palmCivet) {
+    search()
+  }
 })
 
 </script>

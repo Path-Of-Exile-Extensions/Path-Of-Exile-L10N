@@ -6,21 +6,20 @@ export type PalmCivet = {
   items: string;
   static: string;
   stats: string;
+  lang: LanguageIdentities
   statsFlat: string;
   menuSearch: string;
-  lang: LanguageIdentities
 };
 
 export type PalmCivetModel = {
   checksums: AssetChecksum[]
   common: Record<string, string>
-  statsFlat: Record<string, string>
-  menuSearch: AssetRecord[],
-  version: string;
   static: ServerResourceTypes.Static.Statics[];
   stats: ServerResourceTypes.Stats.Stats[];
   items: ServerResourceTypes.Items.Items[];
   lang: LanguageIdentities;
+  statsFlat: Record<string, string>
+  menuSearch: AssetRecord[],
 };
 
 export namespace PalmCivetModel {
@@ -33,9 +32,9 @@ export namespace PalmCivetModel {
       checksums: JSON.parse(entity.checksums),
       common: JSON.parse(entity.common),
       statsFlat: JSON.parse(entity.statsFlat),
-    } as PalmCivetModel
+      menuSearch: JSON.parse(entity.menuSearch),
+    }
   }
-
 
   export function fileNameToField(fileName: string) {
     if (fileName.includes('checksum')) {

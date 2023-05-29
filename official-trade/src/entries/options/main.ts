@@ -1,6 +1,6 @@
 import {createApp} from "vue";
 import App from "./App.vue";
-import appPlugins from "@/compoments/app-plugins";
+import appPlugins from "@/components/app-plugins";
 import {createPinia} from "pinia";
 
 const app = createApp(App)

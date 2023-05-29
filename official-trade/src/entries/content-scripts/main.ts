@@ -2,7 +2,7 @@ import {createApp} from "vue";
 import App from "./App.vue";
 import {createPinia} from 'pinia'
 import renderContent from "./render-content";
-import appPlugins from "@/compoments/app-plugins";
+import appPlugins from "@/components/app-plugins";
 
 let timer: any
 

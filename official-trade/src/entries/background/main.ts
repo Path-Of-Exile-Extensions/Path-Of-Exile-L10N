@@ -1,7 +1,7 @@
 import {Ext, ExtMessageDirections} from "@poe-vela/core/ext";
 import {DB, PreferenceService} from "@poe-vela/l10n-ext";
 import {ExtMessagesIdentities} from "@/classifed/ext-messages";
-import {debounce} from "lodash-es";
+import {clone, debounce} from "lodash-es";
 import {PalmCivetService} from "@/domain/palm-civet";
 
 const getViewData = () => {
@@ -29,12 +29,22 @@ Ext.on.message(async (message) => {
   await initialize();
   switch (message.identify) {
     case ExtMessagesIdentities["Preference:Update"]:
+      const old = clone(PreferenceService.Instance.preference);
       await PreferenceService.Instance.upsert(message.payload);
       Ext.send.multicast({
         identify: ExtMessagesIdentities["Preference:Changed"],
         direction: ExtMessageDirections.Runtime,
         payload: message.payload,
       })
+      // 如果之前没有启用翻译, 现在启用了, 则需要更新资产文件
+      if (!old.enableTranslation && PreferenceService.Instance.preference.enableTranslation) {
+        await PalmCivetService.Instance.forceUpdate();
+        Ext.send.multicast({
+          identify: ExtMessagesIdentities["PalmCivet:Updated"],
+          direction: ExtMessageDirections.Runtime,
+          payload: PalmCivetService.Instance.palmCivet,
+        })
+      }
       return undefined;
     case ExtMessagesIdentities["PalmCivet:Get"]:
       return await PalmCivetService.Instance.get();

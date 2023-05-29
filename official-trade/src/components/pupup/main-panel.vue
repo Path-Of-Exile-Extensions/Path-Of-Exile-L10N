@@ -50,7 +50,7 @@ import {LanguageIdentities} from "@poe-vela/core";
 import {PreferenceEntity} from "@poe-vela/l10n-ext";
 import usePoeVelaL10nPopup from "@/classifed/use-poe-vela-l10n.popup";
 import {computed, ref} from "vue";
-import MutableIcon from "@/compoments/mutable-icon.vue";
+import MutableIcon from "@/components/mutable-icon.vue";
 
 const hasChanged = ref(false);
 
