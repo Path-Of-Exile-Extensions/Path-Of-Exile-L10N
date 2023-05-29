@@ -61,19 +61,25 @@ importers:
       webextension-polyfill:
         specifier: ^0.10.0
         version: 0.10.0
+      xhook:
+        specifier: ^1.6.0
+        version: 1.6.0
     devDependencies:
       '@samrum/vite-plugin-web-extension':
         specifier: https://github.com/samrum/vite-plugin-web-extension
         version: github.com/samrum/vite-plugin-web-extension/09b5998809ec671c39358f69cfc1aab1d221cf2c(vite@4.3.8)
       '@types/chrome':
-        specifier: ^0.0.236
-        version: 0.0.236
+        specifier: ^0.0.237
+        version: 0.0.237
       '@types/lodash-es':
         specifier: ^4.17.7
         version: 4.17.7
       '@types/webextension-polyfill':
         specifier: ^0.10.0
         version: 0.10.0
+      '@types/xhook':
+        specifier: ^1.5.0
+        version: 1.5.0
       '@vitejs/plugin-vue':
         specifier: ^4.2.3
         version: 4.2.3(vite@4.3.8)(vue@3.3.4)
@@ -1205,8 +1211,8 @@ packages:
       '@types/har-format': 1.2.10
     dev: true
 
-  /@types/chrome@0.0.236:
-    resolution: {integrity: sha512-ArQoxO9WtDY6GWcT2cpo+D+hyASPeFt7PHQEUDXwQhRS00Rbop07rnEOA046yws0HkM83Tcew/hW6Dgvnj4iMQ==}
+  /@types/chrome@0.0.237:
+    resolution: {integrity: sha512-krsRmyfMlck5r+H1EapsrrucDRq6iRm0NAi5fapr93CgnpVMDdK+h2+z4x79GegdW7BNH9Vb//gkptORwwwVIQ==}
     dependencies:
       '@types/filesystem': 0.0.32
       '@types/har-format': 1.2.10
@@ -1341,6 +1347,10 @@ packages:
     resolution: {integrity: sha512-zdQDHKUgcX/zBc4GrwsE/7dVdAD8JR4EuiAXiiUhhfyIJXXb2+PrGshFyeXWQPMmmZ2XxgaqclgpIC7eTXc1mg==}
     dependencies:
       '@types/node': 20.2.5
+
+  /@types/xhook@1.5.0:
+    resolution: {integrity: sha512-4gjZvetNo+5Gv2bEYHs6GDl15QXAX+kWXCUKNMeOM+Rrh5dh4X28DrSag9Qwzc0fkR11SJO3h0iUaze6MO/KzA==}
+    dev: true
 
   /@types/yauzl@2.10.0:
     resolution: {integrity: sha512-Cn6WYCm0tXv8p6k+A8PvbDG763EDpBoTzHdA+Q/MF6H3sapGjCm9NzoaJncJS9tUKSuCoDs9XHxYYsQDgxR6kw==}
@@ -5841,6 +5851,10 @@ packages:
     resolution: {integrity: sha512-GCPAHLvrIH13+c0SuacwvRYj2SxJXQ4kaVTT5xgL3kPrz56XxkF21IGhjSE1+W0aw7gpBWRGXLCPnPby6lSpmQ==}
     engines: {node: '>=12'}
     dev: true
+
+  /xhook@1.6.0:
+    resolution: {integrity: sha512-r/urufZx/xMRmC6G5a2o0TceIHvkw0sJb4IQcNbrH1YvwoJSb2N9fg10FkbqsbI5+lyNW9TpB5LxegKMjX40OQ==}
+    dev: false
 
   /xml2js@0.5.0:
     resolution: {integrity: sha512-drPFnkQJik/O+uPKpqSgr22mpuFHqKdbS835iAQrUC73L2F5WkboIRd63ai/2Yg6I1jzifPFKH2NTK+cfglkIA==}
