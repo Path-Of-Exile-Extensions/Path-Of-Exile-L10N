@@ -8,16 +8,14 @@
   />
 </template>
 <script setup lang="ts">
-import {onMounted, shallowRef, watch} from "vue";
+import {onMounted, shallowRef} from "vue";
 import {AssetVendor, AssetVendorMinimizeModel,} from "@poe-vela/core";
-import {BuiltInExtMessageIdentities, Ext, ExtMessageDirections, MenuType, TradeController,} from "@poe-vela/core/ext";
+import {TradeController,} from "@poe-vela/core/ext";
 import {useDebounceFn} from "@vueuse/core";
-import usePoeVelaL10n from "@/classifed/use-poe-vela-l10n";
 import {useElementVirtualRef} from "@/classifed/use-element-virtual-ref";
-import {PalmCivetService} from "@/domain/palm-civet";
-import {DB} from "@poe-vela/l10n-ext";
+import usePoeVelaL10nContentScript from "@/classifed/use-poe-vela-l10n.content-script";
 
-const poeVelaL10n = usePoeVelaL10n();
+usePoeVelaL10nContentScript();
 
 const elementVirtualRef = useElementVirtualRef();
 
@@ -55,7 +53,6 @@ const exchange = () => {
           const oldTitle = optionsEL.title
           optionsEL.title = res[oldTitle] || `No Title (${optionsEL.title})`
         })
-
     })
 }
 
@@ -87,42 +84,8 @@ const search = () => {
     })
 }
 
-const test = () => {
-  PalmCivetService.Instance.substitutes();
-  return
-  switch (tradeController.menuType) {
-    case MenuType.Search:
-      search()
-      break;
-    case MenuType.Exchange:
-      exchange();
-      break;
-  }
-}
-
 onMounted(async () => {
-  await DB.Instance.initialize()
-  await tradeController.initialize()
-  await PalmCivetService.Instance.initialize()
-  await PalmCivetService.Instance.update()
-  Ext.on.response(message => {
-    console.log("content script 收到响应", message)
-    switch (message.identify) {
-
-    }
-
-    return Promise.resolve();
-  })
-
-  Ext.send.message({
-    identify: BuiltInExtMessageIdentities.ContentScriptReady,
-    direction: ExtMessageDirections.Runtime,
-    resDirection: ExtMessageDirections.Tab,
-  })
-})
-
-watch(() => poeVelaL10n.state.preference, (state) => {
-  state.enableTranslation && test()
+  await tradeController.initialize();
 })
 
 </script>

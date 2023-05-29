@@ -36,7 +36,14 @@ export class PalmCivetService {
     return this.localRepository.deleteAll()
   }
 
-  async update(): Promise<void> {
+  async get(): Promise<PalmCivetModel> {
+    if (this.palmCivet) {
+      return Promise.resolve(this.palmCivet);
+    }
+    return this.update();
+  }
+
+  async update(): Promise<PalmCivetModel> {
     const data = await this.localRepository.findOne()
     if (data) {
       const modal = PalmCivetModel.mapFrom(data)
@@ -54,7 +61,7 @@ export class PalmCivetService {
       .then(async (res) => {
         await this.localRepository.upsert(res)
         this.palmCivet = PalmCivetModel.mapFrom(res)
-        return;
+        return this.palmCivet;
       });
   }
 
@@ -65,12 +72,6 @@ export class PalmCivetService {
         this.palmCivet = PalmCivetModel.mapFrom(res)
         return;
       });
-  }
-
-  public substitutes() {
-    localStorage.setItem("lscache-tradedata", JSON.stringify(this.palmCivet.static))
-    localStorage.setItem("lscache-tradeitems", JSON.stringify(this.palmCivet.items))
-    localStorage.setItem("lscache-tradestats", JSON.stringify(this.palmCivet.stats))
   }
 
 }

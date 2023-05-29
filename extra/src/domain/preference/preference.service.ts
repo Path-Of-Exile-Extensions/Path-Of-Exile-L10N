@@ -51,4 +51,8 @@ export class PreferenceService {
     return this.preferenceRepository.upsert(this._preference);
   }
 
+  deleteAll() {
+    return this.preferenceRepository.deleteAll()
+  }
+
 }

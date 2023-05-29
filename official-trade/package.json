@@ -18,7 +18,9 @@
     "@poe-vela/core": "link:../../Vela",
     "webextension-polyfill": "^0.10.0",
     "pinia": "^2.1.3",
-    "rxdb": "14.11.2"
+    "rxdb": "14.11.2",
+    "lodash-es": "^4.17.21",
+    "@carbon/icons-vue": "^10.69.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
@@ -32,7 +34,8 @@
     "@types/webextension-polyfill": "^0.10.0",
     "@samrum/vite-plugin-web-extension": "https://github.com/samrum/vite-plugin-web-extension",
     "@types/chrome": "^0.0.236",
-    "web-ext": "^7.6.2"
+    "web-ext": "^7.6.2",
+    "@types/lodash-es": "^4.17.7"
   },
   "license": "ISC"
 }

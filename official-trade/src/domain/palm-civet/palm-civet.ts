@@ -62,6 +62,18 @@ export namespace PalmCivetModel {
     throw new Error('Unknown file name')
   }
 
+  export function substitutes(palmCivet: PalmCivetModel) {
+    localStorage.setItem("lscache-tradedata", JSON.stringify(palmCivet.static))
+    localStorage.setItem("lscache-tradeitems", JSON.stringify(palmCivet.items))
+    localStorage.setItem("lscache-tradestats", JSON.stringify(palmCivet.stats))
+  }
+
+  export function restore() {
+    localStorage.removeItem("lscache-tradedata")
+    localStorage.removeItem("lscache-tradeitems")
+    localStorage.removeItem("lscache-tradestats")
+  }
+
 }
 
 export const getPalmCivetFileNames = (lang: LanguageIdentities) => {

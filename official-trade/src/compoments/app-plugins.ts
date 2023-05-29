@@ -1,5 +1,17 @@
-import type {App} from "vue";
-import {ElButton, ElButtonGroup, ElEmpty, ElForm, ElLink, ElMessage, ElSelect, ElSwitch, ElTooltip} from "element-plus";
+import {App} from "vue";
+import {
+  ElAlert,
+  ElButton,
+  ElButtonGroup,
+  ElEmpty,
+  ElForm,
+  ElLink,
+  ElMessage,
+  ElProgress,
+  ElSelect,
+  ElSwitch,
+  ElTooltip
+} from "element-plus";
 
 import 'element-plus/es/components/message/style/css'
 import 'element-plus/es/components/button-group/style/css'
@@ -10,11 +22,16 @@ import 'element-plus/es/components/form/style/css'
 import 'element-plus/es/components/select/style/css'
 import 'element-plus/es/components/switch/style/css'
 import 'element-plus/es/components/empty/style/css'
+import 'element-plus/es/components/alert/style/css'
+import 'element-plus/es/components/progress/style/css'
 import "./styles/index.css"
 
-
 export default {
-  install: (app: App) => {
+  /**
+   *
+   * @param app {App}
+   */
+  install: (app) => {
     app.use(ElButton)
     app.use(ElButtonGroup)
     app.use(ElTooltip)
@@ -24,5 +41,7 @@ export default {
     app.use(ElSelect)
     app.use(ElSwitch)
     app.use(ElEmpty)
+    app.use(ElAlert)
+    app.use(ElProgress)
   },
 };
