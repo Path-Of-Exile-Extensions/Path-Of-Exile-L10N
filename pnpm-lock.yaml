@@ -61,9 +61,6 @@ importers:
       webextension-polyfill:
         specifier: ^0.10.0
         version: 0.10.0
-      xhook:
-        specifier: ^1.6.0
-        version: 1.6.0
     devDependencies:
       '@samrum/vite-plugin-web-extension':
         specifier: https://github.com/samrum/vite-plugin-web-extension
@@ -77,9 +74,6 @@ importers:
       '@types/webextension-polyfill':
         specifier: ^0.10.0
         version: 0.10.0
-      '@types/xhook':
-        specifier: ^1.5.0
-        version: 1.5.0
       '@vitejs/plugin-vue':
         specifier: ^4.2.3
         version: 4.2.3(vite@4.3.8)(vue@3.3.4)
@@ -1347,10 +1341,6 @@ packages:
     resolution: {integrity: sha512-zdQDHKUgcX/zBc4GrwsE/7dVdAD8JR4EuiAXiiUhhfyIJXXb2+PrGshFyeXWQPMmmZ2XxgaqclgpIC7eTXc1mg==}
     dependencies:
       '@types/node': 20.2.5
-
-  /@types/xhook@1.5.0:
-    resolution: {integrity: sha512-4gjZvetNo+5Gv2bEYHs6GDl15QXAX+kWXCUKNMeOM+Rrh5dh4X28DrSag9Qwzc0fkR11SJO3h0iUaze6MO/KzA==}
-    dev: true
 
   /@types/yauzl@2.10.0:
     resolution: {integrity: sha512-Cn6WYCm0tXv8p6k+A8PvbDG763EDpBoTzHdA+Q/MF6H3sapGjCm9NzoaJncJS9tUKSuCoDs9XHxYYsQDgxR6kw==}
@@ -5851,10 +5841,6 @@ packages:
     resolution: {integrity: sha512-GCPAHLvrIH13+c0SuacwvRYj2SxJXQ4kaVTT5xgL3kPrz56XxkF21IGhjSE1+W0aw7gpBWRGXLCPnPby6lSpmQ==}
     engines: {node: '>=12'}
     dev: true
-
-  /xhook@1.6.0:
-    resolution: {integrity: sha512-r/urufZx/xMRmC6G5a2o0TceIHvkw0sJb4IQcNbrH1YvwoJSb2N9fg10FkbqsbI5+lyNW9TpB5LxegKMjX40OQ==}
-    dev: false
 
   /xml2js@0.5.0:
     resolution: {integrity: sha512-drPFnkQJik/O+uPKpqSgr22mpuFHqKdbS835iAQrUC73L2F5WkboIRd63ai/2Yg6I1jzifPFKH2NTK+cfglkIA==}

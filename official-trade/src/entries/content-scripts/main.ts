@@ -25,3 +25,16 @@ timer = setInterval(() => {
     clearInterval(timer)
   }
 }, 10)
+
+window.addEventListener("message", event => {
+  if (event.data && event.data.type === "req:intelligence") {
+    console.log("intelligence", event.data)
+    event.data.data.result[0].item.name = "test"
+
+    window.postMessage({
+      type: "res:intelligence",
+      data: JSON.stringify(event.data.data),
+      id: event.data.id,
+    }, "*")
+  }
+})
