@@ -4,17 +4,17 @@ function postMessage(data) {
   return new Promise((resolve, reject) => {
     const id = new Date().getTime();
     window.addEventListener("message", event => {
-      if (event.data && event.data.type === "res:intelligence" && event.data.id === id) {
+      if (event.data && event.data.type === "res:ASSASSIN" && event.data.id === id) {
         resolve(event.data.data);
       }
     })
-    window.postMessage({id, data, type: "req:intelligence"}, "*");
+    window.postMessage({id, data, type: "req:ASSASSIN"}, "*");
   })
 };
-function delay(timeout) {return new Promise(resolve => setTimeout(resolve, timeout));}
 xhook.after(async (request, response, done) => {
   if (request.url.includes("/api/trade/fetch/")) {
-    // response.text = await postMessage(JSON.parse(response.text));
+    response.text = await postMessage(JSON.parse(response.text));
+    // postMessage(JSON.parse(response.text));
     done();
   } else {
     done();

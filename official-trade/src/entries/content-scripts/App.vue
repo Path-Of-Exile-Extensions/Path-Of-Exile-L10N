@@ -10,22 +10,12 @@
 <script setup lang="ts">
 import {onMounted, shallowRef, watch} from "vue";
 import {AssetRecord, AssetVendorMinimizeModel,} from "@poe-vela/core";
-import {TradeController} from "@poe-vela/core/ext";
+import {MenuType, TradeController} from "@poe-vela/core/ext";
 import {useElementVirtualRef} from "@/classifed/use-element-virtual-ref";
 import usePoeVelaL10nContentScript from "@/classifed/use-poe-vela-l10n.content-script";
-
-function getAllSpans(root: Element, effect: (dom: HTMLSpanElement) => void) {
-  let treeWalker = document.createTreeWalker(
-    root,
-    NodeFilter.SHOW_ELEMENT,
-    { acceptNode: (node: HTMLElement) => { return node.tagName.toLowerCase() === 'span' ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; } }
-  );
-  let currentNode = treeWalker.currentNode;
-  while (currentNode) {
-    effect(currentNode as HTMLSpanElement);
-    currentNode = treeWalker.nextNode();
-  }
-}
+import {Search} from "@/classifed/dom-observer";
+import {PalmCivetModel} from "@/domain/palm-civet";
+import browser from "webextension-polyfill";
 
 const poeVelaL10n = usePoeVelaL10nContentScript();
 
@@ -62,7 +52,7 @@ const search = () => {
   const el = tradeEl.querySelector(".search-bar.search-advanced");
   const observer = new MutationObserver(
     () => {
-      console.log("回调 MutationObserver")
+      // console.log("回调 MutationObserver")
       if (freezed) {
         return
       }
@@ -84,11 +74,13 @@ onMounted(async () => {
   await tradeController.initialize();
 })
 
-watch([() => poeVelaL10n.state.preference.enableTranslation, () => poeVelaL10n.state.palmCivet], ([enableTranslation, palmCivet]) => {
-  if (enableTranslation && palmCivet) {
+watch([() => poeVelaL10n.state.preference.enableTranslation, () => poeVelaL10n.state.palmCivet], ([enableTranslation, palmCivet]: [boolean, PalmCivetModel]) => {
+  if (enableTranslation && palmCivet && tradeController.menuType === MenuType.Search) {
     search()
+    Search.Results.observer()
   }
 })
+
 
 </script>
 <style scoped>

@@ -1,10 +1,10 @@
-import { JustLogger } from "../../atomic/logger";
 import {PreferenceEntity, PreferenceEntityDefault} from "./preference.entity";
 import {PreferenceRepository} from "./preference.repository";
 
 export class PreferenceService {
   // 单例
   private static instance: PreferenceService;
+  public static isInitialized = false;
 
   // 内存中缓存的偏好设置
   private _preference!: PreferenceEntity;
@@ -25,6 +25,9 @@ export class PreferenceService {
   }
 
   async initialize(): Promise<PreferenceEntity> {
+    if (PreferenceService.isInitialized) {
+      return Promise.resolve(this.preference);
+    }
     await this.preferenceRepository.initialize();
     const data = await this.preferenceRepository.get();
     if (data) {
@@ -34,7 +37,7 @@ export class PreferenceService {
       // 更新本地
       await this.preferenceRepository.create(this._preference);
     }
-    JustLogger.Instance.log("Preference initialized");
+    PreferenceService.isInitialized = true;
     return Promise.resolve(this.preference);
   }
 

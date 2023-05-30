@@ -50,7 +50,6 @@ export default defineStore('poe-vela-l10n-content-script', () => {
       })
 
       Ext.on.message(message => {
-        console.log("poe-vela-l10n content-script: on.message", message)
         switch (message.identify) {
           case ExtMessagesIdentities.ReInitialize:
             actions.initial(message.payload)
@@ -71,7 +70,6 @@ export default defineStore('poe-vela-l10n-content-script', () => {
       })
 
       Ext.on.response(message => {
-        console.log("poe-vela-l10n content-script: on.response", message)
         switch (message.identify) {
           case ExtMessagesIdentities.Initialize:
             actions.initial(message.payload)

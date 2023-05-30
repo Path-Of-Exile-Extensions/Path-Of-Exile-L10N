@@ -50,7 +50,6 @@ export default defineStore('poe-vela-l10n-popup', () => {
       })
 
       state.preference = newPreference;
-      console.log("updatePreference", state.preference)
     },
     async updateAssets() {
       state.isUpdatingAssets = true;
@@ -78,7 +77,6 @@ export default defineStore('poe-vela-l10n-popup', () => {
       })
 
       Ext.on.message(message => {
-        console.log("poe-vela-l10n popup: on.message", message)
         switch (message.identify) {
           case ExtMessagesIdentities.ReInitialize:
             actions.initial(message.payload)
@@ -90,7 +88,6 @@ export default defineStore('poe-vela-l10n-popup', () => {
       })
 
       Ext.on.response(message => {
-        console.log("poe-vela-l10n popup: on.response", message)
         switch (message.identify) {
           case ExtMessagesIdentities.Initialize:
             actions.initial(message.payload)

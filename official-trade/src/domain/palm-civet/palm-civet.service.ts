@@ -5,7 +5,8 @@ import {AssetChecksum, LanguageIdentities} from "@poe-vela/core";
 export class PalmCivetService {
   // 单例
   private static instance: PalmCivetService;
-  public palmCivet: PalmCivetModel | undefined;
+  public palmCivet: PalmCivetModel;
+  public isInitialized = false;
 
   static get Instance(): PalmCivetService {
     if (!PalmCivetService.instance) {
@@ -21,7 +22,7 @@ export class PalmCivetService {
     private readonly localRepository: StaticLocalRepository,
     private readonly remoteRepository: StaticRemoteRepository,
   ) {
-
+    this.palmCivet = PalmCivetModel.empty();
   }
 
   /**
@@ -30,15 +31,20 @@ export class PalmCivetService {
   async initialize(): Promise<any> {
     await this.localRepository.initialize();
     await this.remoteRepository.initialize();
+    const data = await this.localRepository.findOne()
+    if (data) {
+      this.palmCivet = PalmCivetModel.mapFrom(data)
+      this.isInitialized = true;
+    }
   }
 
   deleteAll() {
-    this.palmCivet = undefined;
+    this.palmCivet = PalmCivetModel.empty();
     return this.localRepository.deleteAll()
   }
 
   async get(): Promise<PalmCivetModel> {
-    if (this.palmCivet) {
+    if (this.isInitialized) {
       return Promise.resolve(this.palmCivet);
     }
     return this.update();
@@ -57,6 +63,8 @@ export class PalmCivetService {
           lang: LanguageIdentities["zh-Hans"]
         })
       }
+      this.palmCivet = modal;
+      return this.palmCivet;
     }
     return this.remoteRepository.all()
       .then(async (res) => {

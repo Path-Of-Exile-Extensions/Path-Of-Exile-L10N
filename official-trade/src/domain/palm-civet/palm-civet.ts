@@ -9,20 +9,37 @@ export type PalmCivet = {
   lang: LanguageIdentities
   statsFlat: string;
   menuSearch: string;
+  full: string;
 };
 
 export type PalmCivetModel = {
   checksums: AssetChecksum[]
-  common: Record<string, string>
+  // 使用 map, 性能更好 https://gist.github.com/Chunlin-Li/2606bd813df88eaeee2d
+  common: Map<string, string>
   static: ServerResourceTypes.Static.Statics[];
   stats: ServerResourceTypes.Stats.Stats[];
   items: ServerResourceTypes.Items.Items[];
   lang: LanguageIdentities;
-  statsFlat: Record<string, string>
+  statsFlat: Map<string, string>
   menuSearch: AssetRecord[],
+  full: Map<string, string>,
 };
 
 export namespace PalmCivetModel {
+  export const empty = (): PalmCivetModel => {
+    return {
+      items: [],
+      static: [],
+      stats: [],
+      lang: LanguageIdentities["en"],
+      checksums: [],
+      common: new Map(),
+      statsFlat: new Map(),
+      menuSearch: [],
+      full: new Map(),
+    }
+  }
+
   export const mapFrom = (entity: PalmCivet): PalmCivetModel => {
     return {
       items: JSON.parse(entity.items),
@@ -30,9 +47,10 @@ export namespace PalmCivetModel {
       stats: JSON.parse(entity.stats),
       lang: entity.lang,
       checksums: JSON.parse(entity.checksums),
-      common: JSON.parse(entity.common),
-      statsFlat: JSON.parse(entity.statsFlat),
+      common: new Map(Object.entries(JSON.parse(entity.common))),
+      statsFlat: new Map(Object.entries(JSON.parse(entity.statsFlat))),
       menuSearch: JSON.parse(entity.menuSearch),
+      full: new Map(Object.entries(JSON.parse(entity.full))),
     }
   }
 
@@ -57,6 +75,9 @@ export namespace PalmCivetModel {
     }
     if (fileName.includes('menu-search')) {
       return 'menuSearch'
+    }
+    if (fileName.includes('full')) {
+      return 'full'
     }
     throw new Error('Unknown file name')
   }
@@ -87,5 +108,6 @@ export const getPalmCivetFileNames = (lang: LanguageIdentities) => {
     `stats.min.${lang}.json`,
     `stats.flat.min.${lang}.json`,
     `menu-search.min.${lang}.json`,
+    `full.min.${lang}.json`,
   ]
 }

@@ -29,7 +29,9 @@ export class StaticRemoteRepository extends RepositoryBase<PalmCivet> {
           .map(fileName => fetch(base + fileName, {cache: "no-store"}))
       )
       .then(res => Promise.all(res.map(i => i.text())))
-      .then(([checksums, common, items,_static, stats, statsFlat, menuSearch]) => {
+      .then((
+        [checksums, common, items,_static, stats, statsFlat, menuSearch, full]
+      ) => {
         return {
           checksums,
           common,
@@ -38,7 +40,8 @@ export class StaticRemoteRepository extends RepositoryBase<PalmCivet> {
           stats,
           statsFlat,
           menuSearch,
-          lang: LanguageIdentities["zh-Hans"]
+          lang: LanguageIdentities["zh-Hans"],
+          full,
         }
       })
   }
