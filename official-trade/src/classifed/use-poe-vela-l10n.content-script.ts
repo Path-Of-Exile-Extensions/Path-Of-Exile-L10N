@@ -1,10 +1,9 @@
-import {getCurrentInstance, onMounted, watch} from 'vue'
-import {Ext, ExtMessageDirections} from "@poe-vela/core/ext";
+import {getCurrentInstance, onMounted, reactive, watch} from 'vue'
+import {Ext, ExtMessageDirections, ExtMessagePortID} from "@poe-vela/core/ext";
 import {ExtMessagesIdentities} from "./ext-messages";
 import {defineStore} from "pinia";
 import {PreferenceEntity, PreferenceEntityDefault} from "@poe-vela/l10n-ext";
 import {PalmCivetModel} from "@/domain/palm-civet";
-import {reactive} from "vue";
 import {ElMessage} from "element-plus";
 
 export type POEVelaL10NViewState = {
@@ -30,11 +29,19 @@ export default defineStore('poe-vela-l10n-content-script', () => {
       }
     },
     GetPalmCivet() {
-      Ext.send.message({
-        identify: ExtMessagesIdentities["PalmCivet:Get"],
-        direction: ExtMessageDirections.Runtime,
-        resDirection: ExtMessageDirections.Tab,
-      })
+      Ext.message.to
+        .runtime$(
+          ExtMessagePortID.ContentScript,
+          {identify: ExtMessagesIdentities["PalmCivet:Get"]}
+        )
+        .then(res => {
+          state.palmCivet = res;
+        })
+      Ext.message.to
+        .runtime$(
+          ExtMessagePortID.ContentScript,
+          {identify: "一条test"}
+        )
     },
     restore() {
       PalmCivetModel.restore();
@@ -43,13 +50,16 @@ export default defineStore('poe-vela-l10n-content-script', () => {
 
   if (getCurrentInstance()) {
     onMounted(async () => {
-      Ext.send.message({
-        identify: ExtMessagesIdentities.Initialize,
-        direction: ExtMessageDirections.Runtime,
-        resDirection: ExtMessageDirections.Tab,
-      })
+      Ext.message.to
+        .runtime$(
+          ExtMessagePortID.ContentScript,
+          {identify: ExtMessagesIdentities.Initialize,}
+        )
+        .then(res => {
+          actions.initial(res)
+        })
 
-      Ext.on.message(message => {
+      Ext.message.addListener.message(ExtMessagePortID.ContentScript, ExtMessageDirections.Runtime, message => {
         switch (message.identify) {
           case ExtMessagesIdentities.ReInitialize:
             actions.initial(message.payload)
@@ -65,23 +75,13 @@ export default defineStore('poe-vela-l10n-content-script', () => {
               showClose: true,
             })
             break;
+          case ExtMessagesIdentities["PalmCivet:Updated"]:
+            state.palmCivet = message.payload;
         }
         return undefined;
       })
 
-      Ext.on.response(message => {
-        switch (message.identify) {
-          case ExtMessagesIdentities.Initialize:
-            actions.initial(message.payload)
-            break;
-          case ExtMessagesIdentities["PalmCivet:Get"]:
-            state.palmCivet = message.payload;
-            break;
-          case ExtMessagesIdentities["PalmCivet:Updated"]:
-            state.palmCivet = message.payload;
-            break;
-        }
-      })
+
     })
   }
 

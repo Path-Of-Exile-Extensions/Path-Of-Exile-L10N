@@ -20,3 +20,4 @@ export enum ExtMessagesIdentities {
   "Query:Items" = "Query:Items",
   "Query:Full" = "Query:Full",
 }
+

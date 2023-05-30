@@ -2,7 +2,7 @@ import {Ext, QS} from "@poe-vela/core/ext";
 import {ExtMessagesIdentities} from "@/classifed/ext-messages";
 
 function textNodesUnder(el: Element) {
-  var n, a = [], walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+  let n, a = [], walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
   while (n = walk.nextNode()) a.push(n);
   return a;
 }

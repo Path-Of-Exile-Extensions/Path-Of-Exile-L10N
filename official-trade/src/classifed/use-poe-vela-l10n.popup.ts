@@ -1,5 +1,5 @@
 import {getCurrentInstance, onMounted, reactive} from 'vue'
-import {Ext, ExtMessageDirections} from "@poe-vela/core/ext";
+import {Ext, ExtMessageDirections, ExtMessagePortID} from "@poe-vela/core/ext";
 import {ExtMessagesIdentities} from "./ext-messages";
 import {defineStore} from "pinia";
 import {PreferenceEntity, PreferenceEntityDefault} from "@poe-vela/l10n-ext";
@@ -43,61 +43,62 @@ export default defineStore('poe-vela-l10n-popup', () => {
         ...preference,
       }
 
-      Ext.send.message({
-        identify: ExtMessagesIdentities["Preference:Update"],
-        payload: newPreference,
-        direction: ExtMessageDirections.Runtime,
-      })
+      Ext.message.to.runtime(
+        ExtMessagePortID.Popup,
+        {identify: ExtMessagesIdentities["Preference:Update"], payload: newPreference,}
+      )
 
       state.preference = newPreference;
     },
     async updateAssets() {
       state.isUpdatingAssets = true;
-      Ext.send.message({
-        identify: ExtMessagesIdentities["PalmCivet:Update"],
-        direction: ExtMessageDirections.Runtime,
-        resDirection: ExtMessageDirections.Runtime,
-      })
+      Ext.message.to.runtime(
+        ExtMessagePortID.Popup,
+        {identify: ExtMessagesIdentities["PalmCivet:Update"],}
+      )
     },
     async restore() {
       Object.assign(state, initState)
-      Ext.send.multicast({
-        identify: ExtMessagesIdentities.Restore,
-        direction: ExtMessageDirections.Runtime,
-      })
+      Ext.message.to.runtime(
+        ExtMessagePortID.Popup,
+        {
+          identify: ExtMessagesIdentities.Restore,
+          direction: ExtMessageDirections.Runtime,
+        }
+      )
     }
   }
 
-  if (getCurrentInstance()) {
+  if (getCurrentInstance() && false) {
     onMounted(async () => {
-      Ext.send.message({
-        identify: ExtMessagesIdentities.Initialize,
-        direction: ExtMessageDirections.Runtime,
-        resDirection: ExtMessageDirections.Runtime,
-      })
+      Ext.message.to
+        .runtime$(
+          ExtMessagePortID.Popup,
+          {
+            identify: ExtMessagesIdentities.Initialize,
+          }
+        )
+        .then(res => {
+          actions.initial(res)
+        })
 
-      Ext.on.message(message => {
-        switch (message.identify) {
-          case ExtMessagesIdentities.ReInitialize:
-            actions.initial(message.payload)
-            break;
-          case ExtMessagesIdentities["Preference:Changed"]:
-            state.preference = message.payload;
-            break;
+      Ext.message.addListener.message(
+        ExtMessagePortID.Popup,
+        ExtMessageDirections.Runtime,
+        message => {
+          switch (message.identify) {
+            case ExtMessagesIdentities.ReInitialize:
+              actions.initial(message.payload)
+              break;
+            case ExtMessagesIdentities["Preference:Changed"]:
+              state.preference = message.payload;
+              break;
+            case ExtMessagesIdentities["PalmCivet:Update"]:
+              state.isUpdatingAssets = false;
+              state.isUpdateAssetsResult = message.payload ? "success" : "fail"
+          }
         }
-      })
-
-      Ext.on.response(message => {
-        switch (message.identify) {
-          case ExtMessagesIdentities.Initialize:
-            actions.initial(message.payload)
-            break;
-          case ExtMessagesIdentities["PalmCivet:Update"]:
-            state.isUpdatingAssets = false;
-            state.isUpdateAssetsResult = message.payload ? "success" : "fail"
-            break;
-        }
-      })
+      )
     })
   }
 
