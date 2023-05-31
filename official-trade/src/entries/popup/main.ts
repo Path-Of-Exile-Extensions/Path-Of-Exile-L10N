@@ -1,11 +1,13 @@
 import {createApp} from 'vue'
 import App from './App.vue'
 import i18n from "./i18n";
-import { createPinia } from 'pinia'
+import {createPinia} from 'pinia'
 import appPlugins from "@/components/app-plugins";
-import {Ext, ExtMessageDirections, ExtMessagePortID} from "@poe-vela/core/ext";
+import {Ext, ExtMessagePortID} from "@poe-vela/core/browser";
+import {globalx} from "@/classifed/globalx";
 
-Ext.message.connect(ExtMessagePortID.Popup, ExtMessageDirections.Runtime)
+const port = Ext.message.connect(ExtMessagePortID.Popup)
+globalx.port = port;
 
 const app = createApp(App)
 app.use(appPlugins)

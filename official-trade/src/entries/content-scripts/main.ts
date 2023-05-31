@@ -1,10 +1,14 @@
-import {Ext, ExtMessageDirections, ExtMessagePortID} from "@poe-vela/core/ext";
-import {ExtMessagesIdentities} from "@/classifed/ext-messages";
+import {Ext, ExtMessagePortID} from "@poe-vela/core/browser";
 import renderContent from "@/entries/content-scripts/render-content";
 import {createApp} from "vue";
 import appPlugins from "@/components/app-plugins";
 import {createPinia} from "pinia";
 import App from "./App.vue";
+import {globalx} from "@/classifed/globalx";
+import {ExtMessagesIdentities} from "@/classifed/ext-messages";
+
+const port = Ext.message.connect(ExtMessagePortID.ContentScript)
+globalx.port = port;
 
 let timer: any
 
@@ -28,18 +32,14 @@ timer = setInterval(() => {
   }
 }, 10)
 
-
-Ext.message.connect(ExtMessagePortID.ContentScript, ExtMessageDirections.Runtime)
 // Ext.message
-//   .to
-//   .runtime(ExtMessagePortID.ContentScript, {
+//   .post(port, {
 //     identify: "普通发送",
 //     payload: 222,
 //   })
 //
 // Ext.message
-//   .to
-//   .runtime$(ExtMessagePortID.ContentScript, {
+//   .post$(port, {
 //     identify: "Promise 发哦那个",
 //     payload: "我是 content 发送的， 等待 promise.then",
 //   })
@@ -50,16 +50,15 @@ Ext.message.connect(ExtMessagePortID.ContentScript, ExtMessageDirections.Runtime
 // Ext
 //   .message
 //   .addListener
-//   .message(ExtMessagePortID.ContentScript, ExtMessageDirections.Runtime, message => {
+//   .message(port, message => {
 //     console.log("main.ts", "接受消息", message)
 //   })
 
 window.addEventListener("message", event => {
   if (event.data && event.data.type === "req:ASSASSIN") {
-    Ext
-      .message
-      .to
-      .runtime$(
+    Ext.message
+      .post$(
+        port,
         {
           identify: ExtMessagesIdentities["Query:Items"],
           payload: event.data.data,

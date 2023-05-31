@@ -1,10 +1,11 @@
 import {getCurrentInstance, onMounted, reactive, watch} from 'vue'
-import {Ext, ExtMessageDirections, ExtMessagePortID} from "@poe-vela/core/ext";
+import {Ext} from "@poe-vela/core/browser";
 import {ExtMessagesIdentities} from "./ext-messages";
 import {defineStore} from "pinia";
 import {PreferenceEntity, PreferenceEntityDefault} from "@poe-vela/l10n-ext";
 import {PalmCivetModel} from "@/domain/palm-civet";
 import {ElMessage} from "element-plus";
+import {globalx} from "@/classifed/globalx";
 
 export type POEVelaL10NViewState = {
   // 用户偏好
@@ -29,19 +30,11 @@ export default defineStore('poe-vela-l10n-content-script', () => {
       }
     },
     GetPalmCivet() {
-      Ext.message.to
-        .runtime$(
-          ExtMessagePortID.ContentScript,
-          {identify: ExtMessagesIdentities["PalmCivet:Get"]}
-        )
-        .then(res => {
+      Ext.message
+        .post$<PalmCivetModel>(globalx.port!, {identify: ExtMessagesIdentities["PalmCivet:Get"]})
+        .then((res) => {
           state.palmCivet = res;
         })
-      Ext.message.to
-        .runtime$(
-          ExtMessagePortID.ContentScript,
-          {identify: "一条test"}
-        )
     },
     restore() {
       PalmCivetModel.restore();
@@ -50,16 +43,12 @@ export default defineStore('poe-vela-l10n-content-script', () => {
 
   if (getCurrentInstance()) {
     onMounted(async () => {
-      Ext.message.to
-        .runtime$(
-          ExtMessagePortID.ContentScript,
-          {identify: ExtMessagesIdentities.Initialize,}
-        )
+      Ext.message.post$(globalx.port!, {identify: ExtMessagesIdentities.Initialize,})
         .then(res => {
           actions.initial(res)
         })
 
-      Ext.message.addListener.message(ExtMessagePortID.ContentScript, ExtMessageDirections.Runtime, message => {
+      Ext.message.addListener.message(globalx.port!, message => {
         switch (message.identify) {
           case ExtMessagesIdentities.ReInitialize:
             actions.initial(message.payload)
@@ -80,8 +69,6 @@ export default defineStore('poe-vela-l10n-content-script', () => {
         }
         return undefined;
       })
-
-
     })
   }
 

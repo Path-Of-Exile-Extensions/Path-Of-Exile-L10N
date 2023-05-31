@@ -1,5 +1,6 @@
-import {Ext, QS} from "@poe-vela/core/ext";
+import {Ext, QS} from "@poe-vela/core/browser";
 import {ExtMessagesIdentities} from "@/classifed/ext-messages";
+import {globalx} from "@/classifed/globalx";
 
 function textNodesUnder(el: Element) {
   let n, a = [], walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
@@ -16,15 +17,17 @@ export namespace Search {
       // }
       // freezed = true;
       const resultsetEL = QS.querySelector(document, "#trade > div.results > .resultset")
-      Array.from(resultsetEL.children as HTMLElement[])
+      Array.from(resultsetEL.children as unknown as HTMLElement[])
         .forEach((resultEL, index) => {
           const nodes = textNodesUnder(resultEL).filter((i) => {
             const textContent = i.textContent?.trim();
             return textContent;
           })
           const texts = nodes.map(i => i.textContent!.trim())
-          Ext.send
-            .toRuntime$({
+          Ext.message
+            .post$(
+              globalx.port!,
+              {
               identify: ExtMessagesIdentities["Query:Full"],
               payload: texts
             })

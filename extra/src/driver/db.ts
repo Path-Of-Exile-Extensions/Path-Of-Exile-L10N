@@ -20,7 +20,8 @@ export class DB {
   public async initialize(): Promise<void> {
     this.driver = await createRxDatabase({
       name: 'poe_l10n',
-      storage: getRxStorageDexie()
+      storage: getRxStorageDexie(),
+      ignoreDuplicate: true,
     });
     JustLogger.Instance.log("DB Driver initialized");
     return Promise.resolve();

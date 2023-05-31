@@ -33,6 +33,9 @@ const _PalmCivetSchemaLiteral = {
     menuSearch: {
       type: 'string',
     },
+    full: {
+      type: 'string',
+    }
   },
   required: ['lang'],
 } as const

@@ -1,9 +1,9 @@
 import {getCurrentInstance, onMounted, reactive} from 'vue'
-import {Ext, ExtMessageDirections, ExtMessagePortID} from "@poe-vela/core/ext";
+import {Ext} from "@poe-vela/core/browser";
 import {ExtMessagesIdentities} from "./ext-messages";
 import {defineStore} from "pinia";
 import {PreferenceEntity, PreferenceEntityDefault} from "@poe-vela/l10n-ext";
-
+import {globalx} from "@/classifed/globalx";
 
 export type POEVelaL10NPopupViewState = {
   // 是否正在更新资产
@@ -43,8 +43,8 @@ export default defineStore('poe-vela-l10n-popup', () => {
         ...preference,
       }
 
-      Ext.message.to.runtime(
-        ExtMessagePortID.Popup,
+      Ext.message.post(
+        globalx.port!,
         {identify: ExtMessagesIdentities["Preference:Update"], payload: newPreference,}
       )
 
@@ -52,39 +52,32 @@ export default defineStore('poe-vela-l10n-popup', () => {
     },
     async updateAssets() {
       state.isUpdatingAssets = true;
-      Ext.message.to.runtime(
-        ExtMessagePortID.Popup,
+      Ext.message.post(
+        globalx.port!,
         {identify: ExtMessagesIdentities["PalmCivet:Update"],}
       )
     },
     async restore() {
       Object.assign(state, initState)
-      Ext.message.to.runtime(
-        ExtMessagePortID.Popup,
+      Ext.message.post(
+        globalx.port!,
         {
           identify: ExtMessagesIdentities.Restore,
-          direction: ExtMessageDirections.Runtime,
         }
       )
     }
   }
 
-  if (getCurrentInstance() && false) {
+  if (getCurrentInstance()) {
     onMounted(async () => {
-      Ext.message.to
-        .runtime$(
-          ExtMessagePortID.Popup,
-          {
-            identify: ExtMessagesIdentities.Initialize,
-          }
-        )
+      Ext.message
+        .post$(globalx.port!, {identify: ExtMessagesIdentities.Initialize})
         .then(res => {
           actions.initial(res)
         })
 
       Ext.message.addListener.message(
-        ExtMessagePortID.Popup,
-        ExtMessageDirections.Runtime,
+        globalx.port!,
         message => {
           switch (message.identify) {
             case ExtMessagesIdentities.ReInitialize:
