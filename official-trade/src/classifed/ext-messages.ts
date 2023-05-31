@@ -19,5 +19,6 @@ export enum ExtMessagesIdentities {
   // 查询物品
   "Query:Items" = "Query:Items",
   "Query:Full" = "Query:Full",
+  "Query:Stat" = "Query:Stat",
 }
 

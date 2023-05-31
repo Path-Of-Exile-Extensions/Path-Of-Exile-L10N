@@ -1,22 +1,10 @@
-import {Ext} from "@poe-vela/core/browser";
+import {Ext, PortStore} from "@poe-vela/core/browser";
 import {clone} from "lodash-es";
 import initialize from "./initialize";
 import {ExtMessagesIdentities} from "@/classifed/ext-messages";
 import {PreferenceService} from "@poe-vela/l10n-ext";
 import {PalmCivetService} from "@/domain/palm-civet";
-
-// Ext.message.onConnect(port => {
-//   Ext.message.addListener.message(port, (message) => {
-//     console.log("background.ts", "message 接受消息", message)
-//   })
-//   Ext.message.addListener.message$(port, (message) => {
-//     console.log("background.ts", "message$ 接受消息", message)
-//     switch (message.identify) {
-//       case "Promise 发哦那个":
-//         return Promise.resolve("我是 background 发送的， Promise.resolve")
-//     }
-//   })
-// })
+import {Stat} from "@poe-vela/core/l10n";
 
 const getViewData = () => {
   return {
@@ -24,42 +12,22 @@ const getViewData = () => {
   }
 }
 
-// const reInitialize = debounce(async () => {
-//   await initialize();
-//   Ext.get.url()
-//     .then((url) => {
-//       if (!url || !url.includes("/trade/exchange")) {
-//         return
-//       }
-//       Ext.message.to.runtime(
-//         ExtMessagePortID.ContentScript,
-//         {
-//           identify: ExtMessagesIdentities.ReInitialize,
-//           payload: getViewData()
-//         }
-//       )
-//     })
-// }, 500)
+let statsFlat = new Map<string, string>();
 
-// 每次 Tab 切换都会调用这里的回调
-// chrome.tabs.onActivated.addListener(function (activeInfo) {
-//   console.log("chrome.tabs.onActivated")
-//   reInitialize();
-// });
+fetch("https://raw.githubusercontent.com/Path-Of-Exile-Vela/L10N-Assets/master/stats.flat.min.primitive-language.json")
+  .then(res => res.json())
+  .then(res => {
+    statsFlat = new Map(Object.entries(res));
+  })
 
-// Tab 创建时会调用这里的回调
-// chrome.tabs.onCreated.addListener(function (tab) {
-//   console.log("chrome.tabs.onCreated")
-//   reInitialize();
-// });
-
-// Tab 刷新时会调用这里的回调
-// chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-//   console.log("chrome.tabs.onUpdated")
-//   reInitialize();
-// })
+const portStore = new PortStore();
 
 Ext.message.onConnect(port => {
+  portStore.add(port);
+  port.onDisconnect.addListener(() => {
+    portStore.remove(port);
+  })
+
   console.log("background.ts", "onConnect", port)
   Ext.message.addListener.message(port, async (message) => {
     console.log("background.ts", "message 接受消息", message)
@@ -78,23 +46,24 @@ Ext.message.onConnect(port => {
         // 如果之前没有启用翻译, 现在启用了, 则需要更新资产文件
         if (!old.enableTranslation && PreferenceService.Instance.preference.enableTranslation) {
           await PalmCivetService.Instance.forceUpdate();
-          // Ext.message.to.multicast(
-          //   port,
-          //   {
-          //     identify: ExtMessagesIdentities["PalmCivet:Updated"],
-          //     payload: PalmCivetService.Instance.palmCivet,
-          //   }
-          // )
+          Ext.message.multicast(
+            portStore.values(),
+            {
+              identify: ExtMessagesIdentities["PalmCivet:Updated"],
+              payload: PalmCivetService.Instance.palmCivet,
+            }
+          )
         }
         break;
       case ExtMessagesIdentities["PalmCivet:Update"]:
         await PalmCivetService.Instance.forceUpdate();
-        // Ext.message.to.multicast(
-        //   {
-        //     identify: ExtMessagesIdentities["PalmCivet:Updated"],
-        //     payload: PalmCivetService.Instance.palmCivet,
-        //   }
-        // )
+        Ext.message.multicast(
+          portStore.values(),
+          {
+            identify: ExtMessagesIdentities["PalmCivet:Updated"],
+            payload: PalmCivetService.Instance.palmCivet,
+          }
+        )
         break;
       case ExtMessagesIdentities.Restore:
         await PreferenceService.Instance.deleteAll();
@@ -127,19 +96,31 @@ Ext.message.onConnect(port => {
         })
         break;
       case ExtMessagesIdentities["Query:Full"]:
-        return message.payload.map((i: string) => {
-          const text = PalmCivetService.Instance.palmCivet.common.get(i);
-          if (text) {
-            return text;
-          }
-          const item = PalmCivetService.Instance.palmCivet.full.get(i);
-          if (item) {
-            return item;
-          }
-          return undefined;
-        })
+        let text_ = PalmCivetService.Instance.palmCivet.common.get(message.payload);
+        if (text_) {
+          return text_;
+        }
+        let item_ = PalmCivetService.Instance.palmCivet.full.get(message.payload);
+        if (item_) {
+          return item_;
+        }
+        return message.payload;
+      case ExtMessagesIdentities["Query:Stat"]:
+        let statWithContent = message.payload.stat;
+        let statId = message.payload.statId;
+        let statWithLang = PalmCivetService.Instance.palmCivet.statsFlat.get(statId);
+        let stat = statsFlat.get(statId);
+        if (stat) {
+          console.log("Stat.fill(statWithContent, statWithLang!, stat)", Stat.fill(statWithContent, statWithLang!, stat))
+          return Stat.fill(statWithContent, statWithLang!, stat)
+        }
+        return statWithContent;
     }
 
     return message.payload;
   })
 })
+
+function parseStringWithPlaceholder(statWithContent: string, statWithLang: string) {
+  const re = statWithContent.match(/#/g);
+}

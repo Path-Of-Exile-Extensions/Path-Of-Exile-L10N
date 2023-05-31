@@ -8,14 +8,13 @@
   />
 </template>
 <script setup lang="ts">
-import {onMounted, shallowRef, watch} from "vue";
+import {onMounted, watch} from "vue";
 import {AssetRecord, AssetVendorMinimizeModel,} from "@poe-vela/core";
 import {MenuType, TradeController} from "@poe-vela/core/browser";
 import {useElementVirtualRef} from "@/classifed/use-element-virtual-ref";
 import usePoeVelaL10nContentScript from "@/classifed/use-poe-vela-l10n.content-script";
 import {Search} from "@/classifed/dom-observer";
 import {PalmCivetModel} from "@/domain/palm-civet";
-import browser from "webextension-polyfill";
 
 const poeVelaL10n = usePoeVelaL10nContentScript();
 
@@ -25,11 +24,11 @@ const tradeController = new TradeController()
 
 let tradeEl: Element | null = null;
 let freezed = false;
-let assets = shallowRef({} as AssetRecord)
+let assets: AssetRecord = {}
 
 const main = () => {
   // const t0 = window.performance.now();
-  Object.entries(assets.value)
+  Object.entries(assets)
     .forEach(([_, asset]) => {
       const el = tradeEl!.querySelector(asset.elCSSSelector) as HTMLElement
       if (!el) {
@@ -48,7 +47,7 @@ const main = () => {
 
 const search = () => {
   tradeEl = document.querySelector("#trade")!
-  assets.value = AssetVendorMinimizeModel.decode(poeVelaL10n.state.palmCivet!.menuSearch);
+  assets = AssetVendorMinimizeModel.decode(poeVelaL10n.state.palmCivet!.menuSearch);
   const el = tradeEl.querySelector(".search-bar.search-advanced");
   const observer = new MutationObserver(
     () => {

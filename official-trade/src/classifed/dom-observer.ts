@@ -19,26 +19,68 @@ export namespace Search {
       const resultsetEL = QS.querySelector(document, "#trade > div.results > .resultset")
       Array.from(resultsetEL.children as unknown as HTMLElement[])
         .forEach((resultEL, index) => {
-          const nodes = textNodesUnder(resultEL).filter((i) => {
-            const textContent = i.textContent?.trim();
-            return textContent;
+          const descriptionEL = QS.querySelector(resultEL, ".itemPopupContainer.newItemPopup.uniquePopup")
+          const itemBoxContentEL = QS.querySelector(resultEL, ".itemBoxContent .content")
+          const itemPopupAdditionalEL = QS.querySelector(resultEL, ".itemPopupAdditional")
+          if (!itemBoxContentEL) {
+            return
+          }
+
+          const properties = [
+            ...QS.querySelectorAll(itemBoxContentEL!, ".property"),
+            ...QS.querySelectorAll(itemBoxContentEL!, ".itemLevel"),
+          ]
+
+          properties.forEach(el => {
+            const span = QS.querySelector(el, "span > span")
+            let textContent = span!.textContent!.trim();
+            if (textContent && textContent.endsWith(":")) {
+              textContent = textContent.slice(0, -1)
+              Ext.message
+                .post$<string | undefined>(
+                  globalx.port!,
+                  {
+                    identify: ExtMessagesIdentities["Query:Full"],
+                    payload: textContent
+                  })
+                .then(res => {
+                  if (res) {
+                    span!.textContent = span.textContent!.replace(textContent, res)
+                  }
+                })
+            }
           })
-          const texts = nodes.map(i => i.textContent!.trim())
-          Ext.message
-            .post$<string[]>(
-              globalx.port!,
-              {
-              identify: ExtMessagesIdentities["Query:Full"],
-              payload: texts
-            })
-            .then(res => {
-              res.forEach((text, index) => {
-                if (text) {
-                  console.log("找到了", text)
-                  nodes[index].textContent!.replace(texts[index], text);
+
+          const explicitMods = QS.querySelectorAll(itemBoxContentEL!, ".explicitMod")
+          explicitMods.forEach(mod => {
+            const contentEL = mod.children[1] as HTMLElement
+            if (!contentEL || !contentEL.dataset) {
+              console.log("contentEL.dataset no", mod)
+              return
+            }
+            let statId = contentEL.dataset.field!
+            if (statId.startsWith("stat.")) {
+              statId = statId.slice(5)
+            }
+            const textContent = contentEL.textContent!.trim();
+            Ext.message
+              .post$<string | undefined>(
+                globalx.port!,
+                {
+                  identify: ExtMessagesIdentities["Query:Stat"],
+                  payload: {
+                    stat: textContent,
+                    statId,
+                  }
+                })
+              .then(res => {
+                if (res) {
+                  contentEL.textContent = res
                 }
               })
-            })
+          })
+
+
         })
       freezed = false;
     }
