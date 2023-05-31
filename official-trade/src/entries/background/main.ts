@@ -60,6 +60,7 @@ const getViewData = () => {
 // })
 
 Ext.message.onConnect(port => {
+  console.log("background.ts", "onConnect", port)
   Ext.message.addListener.message(port, async (message) => {
     console.log("background.ts", "message 接受消息", message)
     await initialize();
@@ -126,7 +127,17 @@ Ext.message.onConnect(port => {
         })
         break;
       case ExtMessagesIdentities["Query:Full"]:
-        return message.payload.map((i: any) => PalmCivetService.Instance.palmCivet.full.get(i))
+        return message.payload.map((i: string) => {
+          const text = PalmCivetService.Instance.palmCivet.common.get(i);
+          if (text) {
+            return text;
+          }
+          const item = PalmCivetService.Instance.palmCivet.full.get(i);
+          if (item) {
+            return item;
+          }
+          return undefined;
+        })
     }
 
     return message.payload;

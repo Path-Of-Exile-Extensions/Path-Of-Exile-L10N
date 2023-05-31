@@ -12,10 +12,10 @@ export namespace Search {
   export namespace Results {
     let freezed = false;
     const handle = () => {
-      // if (freezed) {
-      //   return;
-      // }
-      // freezed = true;
+      if (freezed) {
+        return;
+      }
+      freezed = true;
       const resultsetEL = QS.querySelector(document, "#trade > div.results > .resultset")
       Array.from(resultsetEL.children as unknown as HTMLElement[])
         .forEach((resultEL, index) => {
@@ -25,17 +25,22 @@ export namespace Search {
           })
           const texts = nodes.map(i => i.textContent!.trim())
           Ext.message
-            .post$(
+            .post$<string[]>(
               globalx.port!,
               {
               identify: ExtMessagesIdentities["Query:Full"],
               payload: texts
             })
             .then(res => {
-              console.log("te", res)
+              res.forEach((text, index) => {
+                if (text) {
+                  console.log("找到了", text)
+                  nodes[index].textContent!.replace(texts[index], text);
+                }
+              })
             })
         })
-      // freezed = false;
+      freezed = false;
     }
 
     export const observer = () => {
