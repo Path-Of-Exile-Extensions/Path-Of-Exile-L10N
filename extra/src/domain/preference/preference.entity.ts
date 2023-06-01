@@ -1,4 +1,4 @@
-import {LanguageIdentities} from "@poe-vela/core";
+import {LanguageIdentities} from "@poe-vela/core/l10n";
 
 // 用贫血模型, 工具方法放到 service 中去
 export enum PresentationMode {

@@ -9,7 +9,7 @@
 </template>
 <script setup lang="ts">
 import {onMounted, watch} from "vue";
-import {AssetRecord, AssetVendorMinimizeModel,} from "@poe-vela/core";
+import {AssetRecord, AssetVendorMinimizeModel} from "@poe-vela/core/l10n";
 import {MenuType, TradeController} from "@poe-vela/core/browser";
 import {useElementVirtualRef} from "@/classifed/use-element-virtual-ref";
 import usePoeVelaL10nContentScript from "@/classifed/use-poe-vela-l10n.content-script";

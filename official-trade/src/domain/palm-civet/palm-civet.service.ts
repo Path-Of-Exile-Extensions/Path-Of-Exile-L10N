@@ -1,6 +1,6 @@
 import {StaticLocalRepository, StaticRemoteRepository} from "./palm-civet.repository";
 import {PalmCivetModel} from "./palm-civet";
-import {AssetChecksum, LanguageIdentities} from "@poe-vela/core";
+import {AssetChecksum, LanguageIdentities} from "@poe-vela/core/l10n";
 
 export class PalmCivetService {
   // 单例

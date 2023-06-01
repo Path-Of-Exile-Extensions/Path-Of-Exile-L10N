@@ -1,5 +1,5 @@
 import {createI18n, I18nOptions} from "vue-i18n";
-import {LanguageIdentityModal} from "@poe-vela/core";
+import {LanguageIdentityModal} from "@poe-vela/core/l10n";
 
 const messages: I18nOptions["messages"] = {
   "zh": {

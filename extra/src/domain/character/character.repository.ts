@@ -4,7 +4,7 @@ import {PreferenceService} from "../preference";
 import {Character} from "./character";
 import {CharacterQuery} from "./character.query";
 import {DB} from "../../driver";
-import {LanguageIdentities} from "@poe-vela/core";
+import {LanguageIdentities} from "@poe-vela/core/l10n";
 
 /**
  * 这只是一个语义化方法, 把 zh-Hans 转换为 zh_hans

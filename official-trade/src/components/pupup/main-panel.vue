@@ -46,7 +46,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import {LanguageIdentities} from "@poe-vela/core";
+import {LanguageIdentities} from "@poe-vela/core/l10n";
 import {PreferenceEntity} from "@poe-vela/l10n-ext";
 import usePoeVelaL10nPopup from "@/classifed/use-poe-vela-l10n.popup";
 import {computed, ref} from "vue";

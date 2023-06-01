@@ -111,7 +111,7 @@ Ext.message.onConnect(port => {
         let statWithLang = PalmCivetService.Instance.palmCivet.statsFlat.get(statId);
         let stat = statsFlat.get(statId);
         if (stat) {
-          console.log("Stat.fill(statWithContent, statWithLang!, stat)", Stat.fill(statWithContent, statWithLang!, stat))
+          console.log("Stat.fill", Stat.fill(statWithContent, statWithLang!, stat))
           return Stat.fill(statWithContent, statWithLang!, stat)
         }
         return statWithContent;
@@ -120,7 +120,3 @@ Ext.message.onConnect(port => {
     return message.payload;
   })
 })
-
-function parseStringWithPlaceholder(statWithContent: string, statWithLang: string) {
-  const re = statWithContent.match(/#/g);
-}

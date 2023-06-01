@@ -1,7 +1,7 @@
 import {RepositoryBase, RxRepositoryBase} from "@poe-vela/l10n-ext";
 import {PalmCivetSchemaLiteral} from "./palm-civet.schema";
 import {getPalmCivetFileNames, PalmCivet} from './palm-civet'
-import {AssetChecksum, LanguageIdentities} from "@poe-vela/core";
+import {AssetChecksum, LanguageIdentities} from "@poe-vela/core/l10n";
 
 export class StaticLocalRepository extends RxRepositoryBase<PalmCivet> {
   get dbName() {

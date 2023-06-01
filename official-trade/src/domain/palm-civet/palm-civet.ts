@@ -1,4 +1,4 @@
-import {AssetChecksum, AssetRecord, LanguageIdentities, ServerResourceTypes} from "@poe-vela/core";
+import {AssetChecksum, AssetRecord, LanguageIdentities, ServerResourceTypes} from "@poe-vela/core/l10n";
 
 export type PalmCivet = {
   checksums: string;

@@ -2,6 +2,13 @@
 import {computed, ref, watch} from 'vue'
 import {CheckmarkOutline16, CircleDash16, CloseOutline16} from '@carbon/icons-vue';
 
+// 临时解决一下 @carbon/icons-vue 的问题
+declare module '@carbon/icons-vue' {
+  export const CheckmarkOutline16: any
+  export const CircleDash16: any
+  export const CloseOutline16: any
+}
+
 const props = defineProps({
   /**
    * @description
