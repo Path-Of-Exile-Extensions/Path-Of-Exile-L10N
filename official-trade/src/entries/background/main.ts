@@ -87,12 +87,17 @@ Ext.message.onConnect(port => {
       case ExtMessagesIdentities["Preflight"]:
         message.payload = message.payload.map((i: TradeFetchTypes.Result) => {
           if (i.item) {
+            // 本地化名称
             if (i.item.name) {
               i.item.name = PalmCivetService.Instance.palmCivet.full.get(i.item.name) || i.item.name
             }
+
+            // 本地化基础类型
             if (i.item.typeLine) {
               i.item.typeLine = PalmCivetService.Instance.palmCivet.full.get(i.item.typeLine) || i.item.typeLine
             }
+
+            // 本地化隐式属性
             if (
               i.item.explicitMods
               && i.item.extended
@@ -105,20 +110,24 @@ Ext.message.onConnect(port => {
                 // 这个 hash 就是完整的 stat id
                 const [hash,] = i.item.extended.hashes.explicit[index]
                 // stat 的最大最小
-                const mod = i.item.extended
-                  .mods
-                  .explicit
-                  .find(i => {
-                    return i.magnitudes.some(i => i.hash === hash)
-                  })
+                // const mod = i.item.extended
+                //   .mods
+                //   .explicit
+                //   .find(i => {
+                //     return i.magnitudes.some(i => i.hash === hash)
+                //   })
 
                 let statWithLang = PalmCivetService.Instance.palmCivet.statsFlat.get(hash);
                 let stat = statsFlat.get(hash)!;
-                i.item.explicitMods[index] = Stat.fill(explicitMod, statWithLang!, stat)
+                i.item.explicitMods[index] = Stat.replace(explicitMod, statWithLang!, stat)
               }
+            } else if (i.item.explicitMods && !i.item.extended) {
+              // 如果只有 explicitMods, 但是没有 extended, 说明可能是技能宝石, 这时候要模糊搜索
+              // Stat.replaceFuzzy()
+
             }
 
-
+            // 本地化显示属性
             if (
               i.item.implicitMods
               && i.item.extended
@@ -130,21 +139,11 @@ Ext.message.onConnect(port => {
               for (const [index, implicitMod] of i.item.implicitMods.entries()) {
                 // 这个 hash 就是完整的 stat id
                 const [hash,] = i.item.extended.hashes.implicit[index]
-                // stat 的最大最小
-                const mod = i.item.extended
-                  .mods
-                  .implicit
-                  .find(i => {
-                    return i.magnitudes.some(i => i.hash === hash)
-                  })
-
                 let statWithLang = PalmCivetService.Instance.palmCivet.statsFlat.get(hash);
                 let stat = statsFlat.get(hash)!;
-                i.item.implicitMods[index] = Stat.fill(implicitMod, statWithLang!, stat)
+                i.item.implicitMods[index] = Stat.replace(implicitMod, statWithLang!, stat)
               }
             }
-
-
           }
           return i;
         })
