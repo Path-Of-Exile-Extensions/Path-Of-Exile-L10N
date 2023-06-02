@@ -86,19 +86,19 @@ export namespace Search {
     }
 
     export const observer = () => {
-      const resultsEL = QS.querySelector(document, "#trade > div.results")
-      const observer = new MutationObserver(() => {
-        const resultsetEL = QS.querySelector(resultsEL!, ".resultset")
-        if (!resultsetEL) {
-          return
-        }
-        const resultsetObserver = new MutationObserver(() => {
-          handle();
-          resultsetObserver.disconnect();
-        })
-        resultsetObserver.observe(resultsetEL, {childList: true})
-      })
-      observer.observe(resultsEL!, {childList: true})
+      // const resultsEL = QS.querySelector(document, "#trade > div.results")
+      // const observer = new MutationObserver(() => {
+      //   const resultsetEL = QS.querySelector(resultsEL!, ".resultset")
+      //   if (!resultsetEL) {
+      //     return
+      //   }
+      //   const resultsetObserver = new MutationObserver(() => {
+      //     handle();
+      //     resultsetObserver.disconnect();
+      //   })
+      //   resultsetObserver.observe(resultsetEL, {childList: true})
+      // })
+      // observer.observe(resultsEL!, {childList: true})
     }
   }
 }

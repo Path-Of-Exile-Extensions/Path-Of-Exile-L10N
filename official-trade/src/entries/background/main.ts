@@ -4,7 +4,7 @@ import initialize from "./initialize";
 import {ExtMessagesIdentities} from "@/classifed/ext-messages";
 import {PreferenceService} from "@poe-vela/l10n-ext";
 import {PalmCivetService} from "@/domain/palm-civet";
-import {Stat} from "@poe-vela/core/l10n";
+import {Stat, TradeFetchTypes} from "@poe-vela/core/l10n";
 
 const getViewData = () => {
   return {
@@ -84,37 +84,71 @@ Ext.message.onConnect(port => {
         return await PalmCivetService.Instance.get();
       case ExtMessagesIdentities.Initialize:
         return getViewData();
-      case ExtMessagesIdentities["Query:Items"]:
-        message.payload.result = message.payload.result.map((i: any) => {
-          if (i.item.name) {
-            i.item.name = PalmCivetService.Instance.palmCivet.full.get(i.item.name) || i.item.name
-          }
-          if (i.item.typeLine) {
-            i.item.typeLine = PalmCivetService.Instance.palmCivet.full.get(i.item.typeLine) || i.item.typeLine
+      case ExtMessagesIdentities["Preflight"]:
+        message.payload = message.payload.map((i: TradeFetchTypes.Result) => {
+          if (i.item) {
+            if (i.item.name) {
+              i.item.name = PalmCivetService.Instance.palmCivet.full.get(i.item.name) || i.item.name
+            }
+            if (i.item.typeLine) {
+              i.item.typeLine = PalmCivetService.Instance.palmCivet.full.get(i.item.typeLine) || i.item.typeLine
+            }
+            if (
+              i.item.explicitMods
+              && i.item.extended
+              && i.item.extended.mods
+              && i.item.extended.mods.explicit
+              && i.item.extended.hashes
+              && i.item.extended.hashes.explicit
+            ) {
+              for (const [index, explicitMod] of i.item.explicitMods.entries()) {
+                // 这个 hash 就是完整的 stat id
+                const [hash,] = i.item.extended.hashes.explicit[index]
+                // stat 的最大最小
+                const mod = i.item.extended
+                  .mods
+                  .explicit
+                  .find(i => {
+                    return i.magnitudes.some(i => i.hash === hash)
+                  })
+
+                let statWithLang = PalmCivetService.Instance.palmCivet.statsFlat.get(hash);
+                let stat = statsFlat.get(hash)!;
+                i.item.explicitMods[index] = Stat.fill(explicitMod, statWithLang!, stat)
+              }
+            }
+
+
+            if (
+              i.item.implicitMods
+              && i.item.extended
+              && i.item.extended.mods
+              && i.item.extended.mods.implicit
+              && i.item.extended.hashes
+              && i.item.extended.hashes.implicit
+            ) {
+              for (const [index, implicitMod] of i.item.implicitMods.entries()) {
+                // 这个 hash 就是完整的 stat id
+                const [hash,] = i.item.extended.hashes.implicit[index]
+                // stat 的最大最小
+                const mod = i.item.extended
+                  .mods
+                  .implicit
+                  .find(i => {
+                    return i.magnitudes.some(i => i.hash === hash)
+                  })
+
+                let statWithLang = PalmCivetService.Instance.palmCivet.statsFlat.get(hash);
+                let stat = statsFlat.get(hash)!;
+                i.item.implicitMods[index] = Stat.fill(implicitMod, statWithLang!, stat)
+              }
+            }
+
+
           }
           return i;
         })
         break;
-      case ExtMessagesIdentities["Query:Full"]:
-        let text_ = PalmCivetService.Instance.palmCivet.common.get(message.payload);
-        if (text_) {
-          return text_;
-        }
-        let item_ = PalmCivetService.Instance.palmCivet.full.get(message.payload);
-        if (item_) {
-          return item_;
-        }
-        return message.payload;
-      case ExtMessagesIdentities["Query:Stat"]:
-        let statWithContent = message.payload.stat;
-        let statId = message.payload.statId;
-        let statWithLang = PalmCivetService.Instance.palmCivet.statsFlat.get(statId);
-        let stat = statsFlat.get(statId);
-        if (stat) {
-          console.log("Stat.fill", Stat.fill(statWithContent, statWithLang!, stat))
-          return Stat.fill(statWithContent, statWithLang!, stat)
-        }
-        return statWithContent;
     }
 
     return message.payload;

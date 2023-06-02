@@ -6,6 +6,8 @@ import {createPinia} from "pinia";
 import App from "./App.vue";
 import {globalx} from "@/classifed/globalx";
 import {ExtMessagesIdentities} from "@/classifed/ext-messages";
+import {ElMessage} from "element-plus";
+import {TradeFetchTypes} from "../../../../../Vela/src/l10n";
 
 const port = Ext.message.connect(ExtMessagePortID.ContentScript)
 globalx.port = port;
@@ -60,18 +62,23 @@ window.addEventListener("message", event => {
       .post$(
         port,
         {
-          identify: ExtMessagesIdentities["Query:Items"],
-          payload: event.data.data,
+          identify: ExtMessagesIdentities["Preflight"],
+          payload: event.data.data.result as TradeFetchTypes.Result[],
         },
         2000
       )
-      .catch(() => {
-        return event.data.data;
+      .catch((err) => {
+        const error = `[POE Vela L10N]: Connect Background Failed`
+        console.warn(error, err)
+        ElMessage.warning({
+          message: error,
+        })
+        return event.data.data.result as TradeFetchTypes.Result[];
       })
       .then(res => {
         window.postMessage({
           type: "res:ASSASSIN",
-          data: JSON.stringify(res),
+          data: JSON.stringify({result: res}),
           id: event.data.id,
         }, "*")
       })

@@ -15,10 +15,8 @@ xhook.after(async (request, response, done) => {
   if (request.url.includes("/api/trade/fetch/")) {
     response.text = await postMessage(JSON.parse(response.text));
     // postMessage(JSON.parse(response.text));
-    done();
-  } else {
-    done();
   }
+  done();
 });
 `
 

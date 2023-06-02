@@ -16,9 +16,7 @@ export enum ExtMessagesIdentities {
   "PalmCivet:Get" = "PalmCivet:Get",
   // 还原
   "Restore" = "Restore",
-  // 查询物品
-  "Query:Items" = "Query:Items",
-  "Query:Full" = "Query:Full",
-  "Query:Stat" = "Query:Stat",
+  // 预检
+  "Preflight" = "Preflight",
 }
 
