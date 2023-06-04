@@ -35,6 +35,15 @@ const _PalmCivetSchemaLiteral = {
     },
     full: {
       type: 'string',
+    },
+    gemStatsFlat: {
+      type: 'string',
+    },
+    gemNames: {
+      type: 'string',
+    },
+    gemFlat: {
+      type: 'string',
     }
   },
   required: ['lang'],

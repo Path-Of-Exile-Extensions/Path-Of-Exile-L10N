@@ -1,5 +1,5 @@
 import {Ext, PortStore} from "@poe-vela/core/browser";
-import {clone} from "lodash-es";
+import {clone, cloneDeep} from "lodash-es";
 import initialize from "./initialize";
 import {ExtMessagesIdentities} from "@/classifed/ext-messages";
 import {PreferenceService} from "@poe-vela/l10n-ext";
@@ -86,15 +86,16 @@ Ext.message.onConnect(port => {
         return getViewData();
       case ExtMessagesIdentities["Preflight"]:
         message.payload = message.payload.map((i: TradeFetchTypes.Result) => {
+          const output = cloneDeep(i);
           if (i.item) {
             // 本地化名称
             if (i.item.name) {
-              i.item.name = PalmCivetService.Instance.palmCivet.full.get(i.item.name) || i.item.name
+              output.item.name = PalmCivetService.Instance.palmCivet.full.get(i.item.name) || i.item.name
             }
 
             // 本地化基础类型
             if (i.item.typeLine) {
-              i.item.typeLine = PalmCivetService.Instance.palmCivet.full.get(i.item.typeLine) || i.item.typeLine
+              output.item.typeLine = PalmCivetService.Instance.palmCivet.full.get(i.item.typeLine) || i.item.typeLine
             }
 
             // 本地化隐式属性
@@ -119,11 +120,23 @@ Ext.message.onConnect(port => {
 
                 let statWithLang = PalmCivetService.Instance.palmCivet.statsFlat.get(hash);
                 let stat = statsFlat.get(hash)!;
-                i.item.explicitMods[index] = Stat.replace(explicitMod, statWithLang!, stat)
+                output.item.explicitMods[index] = Stat.replace(explicitMod, statWithLang!, stat)
               }
-            } else if (i.item.explicitMods && !i.item.extended) {
-              // 如果只有 explicitMods, 但是没有 extended, 说明可能是技能宝石, 这时候要模糊搜索
-              // Stat.replaceFuzzy()
+            } else if (i.item.explicitMods && !i.item.extended.mods) {
+              if (i.item.typeLine) {
+                const gem = PalmCivetService.Instance.palmCivet.gemFlat.get(i.item.typeLine)
+                if (gem) {
+                  // 技能宝石名称
+                  output.item.typeLine = gem.name
+                  // 技能宝石描述
+                  output.item.secDescrText = gem.secDescrText
+
+                  // 如果只有 explicitMods, 但是没有 extended, 说明可能是技能宝石, 这时候要模糊搜索
+                  // output.item.explicitMods.forEach((mod, index) => {
+                  //   output.item.explicitMods[index] = Stat.replaceFuzzy(mod, gem.name, gem.name_)
+                  // })
+                }
+              }
 
             }
 
@@ -141,11 +154,12 @@ Ext.message.onConnect(port => {
                 const [hash,] = i.item.extended.hashes.implicit[index]
                 let statWithLang = PalmCivetService.Instance.palmCivet.statsFlat.get(hash);
                 let stat = statsFlat.get(hash)!;
-                i.item.implicitMods[index] = Stat.replace(implicitMod, statWithLang!, stat)
+                output.item.implicitMods![index] = Stat.replace(implicitMod, statWithLang!, stat)
               }
             }
+
           }
-          return i;
+          return output;
         })
         break;
     }

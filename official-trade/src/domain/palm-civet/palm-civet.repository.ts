@@ -19,18 +19,18 @@ export class StaticLocalRepository extends RxRepositoryBase<PalmCivet> {
 
 }
 
-const base = "https://raw.githubusercontent.com/Path-Of-Exile-Vela/L10N-Assets/master/"
+const base = "https://raw.githubusercontent.com/Path-Of-Exile-Vela/L10N-Assets/master/zh-Hans/"
 
 export class StaticRemoteRepository extends RepositoryBase<PalmCivet> {
   all(): Promise<PalmCivet> {
     return Promise
       .all(
-        getPalmCivetFileNames(LanguageIdentities["zh-Hans"])
+        getPalmCivetFileNames()
           .map(fileName => fetch(base + fileName, {cache: "no-store"}))
       )
       .then(res => Promise.all(res.map(i => i.text())))
       .then((
-        [checksums, common, items,_static, stats, statsFlat, menuSearch, full]
+        [checksums, common, items,_static, stats, statsFlat, menuSearch, full, gemFlat, gemNames, gemStatsFlat]
       ) => {
         return {
           checksums,
@@ -42,6 +42,9 @@ export class StaticRemoteRepository extends RepositoryBase<PalmCivet> {
           menuSearch,
           lang: LanguageIdentities["zh-Hans"],
           full,
+          gemFlat,
+          gemNames,
+          gemStatsFlat,
         }
       })
   }
@@ -51,8 +54,7 @@ export class StaticRemoteRepository extends RepositoryBase<PalmCivet> {
   }
 
   checksum(): Promise<AssetChecksum[]> {
-    const base = "https://raw.githubusercontent.com/Path-Of-Exile-Vela/L10N-Assets/master/"
-    return fetch(base + `checksums.zh-Hans.json`, {cache: "no-store"})
+    return fetch(base + `checksums.min.json`, {cache: "no-store"})
       .then(res => res.json())
   }
 

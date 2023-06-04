@@ -1,4 +1,5 @@
 import {AssetChecksum, AssetRecord, LanguageIdentities, ServerResourceTypes} from "@poe-vela/core/l10n";
+import {GemEntity, GemStatModel} from "@poe-vela/core";
 
 export type PalmCivet = {
   checksums: string;
@@ -10,6 +11,9 @@ export type PalmCivet = {
   statsFlat: string;
   menuSearch: string;
   full: string;
+  gemFlat: string;
+  gemNames: string;
+  gemStatsFlat: string;
 };
 
 export type PalmCivetModel = {
@@ -23,6 +27,9 @@ export type PalmCivetModel = {
   statsFlat: Map<string, string>
   menuSearch: AssetRecord[],
   full: Map<string, string>,
+  gemFlat: Map<string, GemEntity>,
+  gemNames: Map<string, string>,
+  gemStatsFlat: Map<string, GemStatModel>,
 };
 
 export namespace PalmCivetModel {
@@ -37,6 +44,9 @@ export namespace PalmCivetModel {
       statsFlat: new Map(),
       menuSearch: [],
       full: new Map(),
+      gemFlat: new Map(),
+      gemNames: new Map(),
+      gemStatsFlat: new Map(),
     }
   }
 
@@ -51,10 +61,13 @@ export namespace PalmCivetModel {
       statsFlat: new Map(Object.entries(JSON.parse(entity.statsFlat))),
       menuSearch: JSON.parse(entity.menuSearch),
       full: new Map(Object.entries(JSON.parse(entity.full))),
+      gemFlat: new Map(Object.entries(JSON.parse(entity.gemFlat))),
+      gemNames: new Map(Object.entries(JSON.parse(entity.gemNames))),
+      gemStatsFlat: new Map(Object.entries(JSON.parse(entity.gemStatsFlat))),
     }
   }
 
-  export function fileNameToField(fileName: string) {
+  export function fileNameToField(fileName: string): keyof PalmCivet {
     if (fileName.includes('checksum')) {
       return 'checksums'
     }
@@ -79,6 +92,15 @@ export namespace PalmCivetModel {
     if (fileName.includes('full')) {
       return 'full'
     }
+    if (fileName.includes('gem.flat')) {
+      return 'gemFlat'
+    }
+    if (fileName.includes('gem.names')) {
+      return 'gemNames'
+    }
+    if (fileName.includes('gem-stats.flat')) {
+      return 'gemStatsFlat'
+    }
     throw new Error('Unknown file name')
   }
 
@@ -96,18 +118,20 @@ export namespace PalmCivetModel {
     localStorage.removeItem("lscache-tradeitems-cacheexpiration")
     localStorage.removeItem("lscache-tradestats-cacheexpiration")
   }
-
 }
 
-export const getPalmCivetFileNames = (lang: LanguageIdentities) => {
+export const getPalmCivetFileNames = () => {
   return [
-    `checksums.${lang}.json`,
-    `common.min.${lang}.json`,
-    `items.min.${lang}.json`,
-    `static.min.${lang}.json`,
-    `stats.min.${lang}.json`,
-    `stats.flat.min.${lang}.json`,
-    `menu-search.min.${lang}.json`,
-    `full.min.${lang}.json`,
+    `checksums.min.json`,
+    `common.min.json`,
+    `items.min.json`,
+    `static.min.json`,
+    `stats.min.json`,
+    `stats.flat.min.json`,
+    `menu-search.min.json`,
+    `full.min.json`,
+    `gem.flat.min.json`,
+    `gem.names.min.json`,
+    `gem-stats.flat.min.json`,
   ]
 }
