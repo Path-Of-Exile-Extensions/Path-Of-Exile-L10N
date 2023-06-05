@@ -32,7 +32,8 @@ const main = () => {
     .forEach(([_, asset]) => {
       const el = tradeEl!.querySelector(asset.elCSSSelector) as HTMLElement
       if (!el) {
-        throw new Error(`can not find element by selector: ${asset.elCSSSelector}`)
+        // throw new Error(`can not find element by selector: ${asset.elCSSSelector}`)
+        return
       }
 
       if (asset.corrupted) {

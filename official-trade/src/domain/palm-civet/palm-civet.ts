@@ -128,7 +128,7 @@ export const getPalmCivetFileNames = () => {
     `static.min.json`,
     `stats.min.json`,
     `stats.flat.min.json`,
-    `menu-search.min.json`,
+    `menu-search.min.min.json`,
     `full.min.json`,
     `gem.flat.min.json`,
     `gem.names.min.json`,
