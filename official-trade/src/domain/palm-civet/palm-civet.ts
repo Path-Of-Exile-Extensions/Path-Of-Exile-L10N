@@ -29,7 +29,7 @@ export type PalmCivetModel = {
   full: Map<string, string>,
   gemFlat: Map<string, GemEntity>,
   gemNames: Map<string, string>,
-  gemStatsFlat: Map<string, GemStatModel>,
+  gemStatsFlat: Map<string, GemStatModel[]>,
 };
 
 export namespace PalmCivetModel {

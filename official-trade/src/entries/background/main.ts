@@ -118,8 +118,8 @@ Ext.message.onConnect(port => {
                 //     return i.magnitudes.some(i => i.hash === hash)
                 //   })
 
-                let statWithLang = PalmCivetService.Instance.palmCivet.statsFlat.get(hash);
-                let stat = statsFlat.get(hash)!;
+                const statWithLang = PalmCivetService.Instance.palmCivet.statsFlat.get(hash);
+                const stat = statsFlat.get(hash)!;
                 output.item.explicitMods[index] = Stat.replace(explicitMod, statWithLang!, stat)
               }
             } else if (i.item.explicitMods && !i.item.extended.mods) {
@@ -131,10 +131,11 @@ Ext.message.onConnect(port => {
                   // 技能宝石描述
                   output.item.secDescrText = gem.secDescrText
 
+                  const statsWithLang = PalmCivetService.Instance.palmCivet.gemStatsFlat.get(gem.name_)!
                   // 如果只有 explicitMods, 但是没有 extended, 说明可能是技能宝石, 这时候要模糊搜索
-                  // output.item.explicitMods.forEach((mod, index) => {
-                  //   output.item.explicitMods[index] = Stat.replaceFuzzy(mod, gem.name, gem.name_)
-                  // })
+                  output.item.explicitMods.forEach((mod, index) => {
+                    output.item.explicitMods[index] = Stat.replaceFuzzy(mod, statsWithLang[index])
+                  })
                 }
               }
 
@@ -152,8 +153,8 @@ Ext.message.onConnect(port => {
               for (const [index, implicitMod] of i.item.implicitMods.entries()) {
                 // 这个 hash 就是完整的 stat id
                 const [hash,] = i.item.extended.hashes.implicit[index]
-                let statWithLang = PalmCivetService.Instance.palmCivet.statsFlat.get(hash);
-                let stat = statsFlat.get(hash)!;
+                const statWithLang = PalmCivetService.Instance.palmCivet.statsFlat.get(hash);
+                const stat = statsFlat.get(hash)!;
                 output.item.implicitMods![index] = Stat.replace(implicitMod, statWithLang!, stat)
               }
             }
