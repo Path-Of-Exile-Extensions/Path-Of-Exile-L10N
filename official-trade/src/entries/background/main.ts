@@ -98,6 +98,32 @@ Ext.message.onConnect(port => {
               output.item.typeLine = PalmCivetService.Instance.palmCivet.full.get(i.item.typeLine) || i.item.typeLine
             }
 
+            // 本地化需求数据
+            if (i.item.requirements) {
+              output.item.requirements!.forEach(requireItem => {
+                if (requireItem.name) {
+                  requireItem.name = PalmCivetService.Instance.palmCivet.common.get(requireItem.name) || requireItem.name
+                }
+              })
+            }
+
+            // 本地化属性
+            if (i.item.properties) {
+              output.item.properties!.forEach(property => {
+                const nameArray = property.name!.split(",")
+                if (nameArray.length > 1) {
+                  property.name = nameArray.map(i => {
+                    i = i.trim();
+                    return PalmCivetService.Instance.palmCivet.common.get(i) || i
+                  }).join(", ")
+                } else {
+                  if (property.name) {
+                    property.name = PalmCivetService.Instance.palmCivet.common.get(property.name) || property.name
+                  }
+                }
+              })
+            }
+
             // 本地化隐式属性
             if (
               i.item.explicitMods
@@ -133,9 +159,45 @@ Ext.message.onConnect(port => {
 
                   const statsWithLang = PalmCivetService.Instance.palmCivet.gemStatsFlat.get(gem.name_)!
                   // 如果只有 explicitMods, 但是没有 extended, 说明可能是技能宝石, 这时候要模糊搜索
-                  output.item.explicitMods.forEach((mod, index) => {
-                    output.item.explicitMods[index] = Stat.replaceFuzzy(mod, statsWithLang[index])
+                  output.item.explicitMods.forEach((statWithContent, index) => {
+                    const gemStat = Stat.matching(statWithContent, statsWithLang);
+                    if (gemStat) {
+                      output.item.explicitMods[index] = Stat.replace(statWithContent, gemStat.name, gemStat.name_)
+                    }
                   })
+
+                  if (i.item.hybrid) {
+                    if (i.item.hybrid.baseTypeName) {
+                      output.item.hybrid!.baseTypeName = PalmCivetService.Instance.palmCivet.full.get(i.item.hybrid.baseTypeName) || i.item.hybrid.baseTypeName
+                    }
+                    if (i.item.hybrid.secDescrText) {
+                      output.item.hybrid!.secDescrText = PalmCivetService.Instance.palmCivet.full.get(i.item.hybrid.secDescrText) || i.item.hybrid.secDescrText
+                    }
+                    if (i.item.hybrid.properties) {
+                      output.item.hybrid!.properties!.forEach(property => {
+                        const nameArray = property.name!.split(",")
+                        if (nameArray.length > 1) {
+                          property.name = nameArray.map(i => {
+                            i = i.trim();
+                            return PalmCivetService.Instance.palmCivet.common.get(i) || i
+                          }).join(", ")
+                        } else {
+                          if (property.name) {
+                            property.name = PalmCivetService.Instance.palmCivet.common.get(property.name) || property.name
+                          }
+                        }
+                      })
+                    }
+                    if (i.item.hybrid.explicitMods) {
+                      i.item.hybrid.explicitMods.forEach((statWithContent, index) => {
+                        const gemStat = Stat.matching(statWithContent, statsWithLang);
+                        if (gemStat) {
+                          output.item.hybrid!.explicitMods![index] = Stat.replace(statWithContent, gemStat.name, gemStat.name_)
+                        }
+                      })
+                    }
+                  }
+
                 }
               }
 

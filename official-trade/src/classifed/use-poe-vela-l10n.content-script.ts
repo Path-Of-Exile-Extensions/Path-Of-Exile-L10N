@@ -43,7 +43,7 @@ export default defineStore('poe-vela-l10n-content-script', () => {
 
   if (getCurrentInstance()) {
     onMounted(async () => {
-      Ext.message.post$(globalx.port!, {identify: ExtMessagesIdentities.Initialize,})
+      Ext.message.post$(globalx.port!, {identify: ExtMessagesIdentities.Initialize})
         .then(res => {
           actions.initial(res)
         })

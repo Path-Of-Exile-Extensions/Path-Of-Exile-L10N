@@ -43,7 +43,7 @@ window.addEventListener("message", event => {
           identify: ExtMessagesIdentities["Preflight"],
           payload: event.data.data.result as TradeFetchTypes.Result[],
         },
-        2000
+        5000
       )
       .catch((err) => {
         const error = `[POE Vela L10N]: Connect Background Failed`

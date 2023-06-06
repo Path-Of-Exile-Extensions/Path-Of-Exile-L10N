@@ -9,7 +9,7 @@
 </template>
 <script setup lang="ts">
 import {onMounted, watch} from "vue";
-import {AssetRecord, AssetVendorMinimizeModel} from "@poe-vela/core/l10n";
+import {AssetRecord, AssetVendor, AssetVendorMinimizeModel} from "@poe-vela/core/l10n";
 import {MenuType, TradeController} from "@poe-vela/core/browser";
 import {useElementVirtualRef} from "@/classifed/use-element-virtual-ref";
 import usePoeVelaL10nContentScript from "@/classifed/use-poe-vela-l10n.content-script";
@@ -24,12 +24,13 @@ const tradeController = new TradeController()
 
 let tradeEl: Element | null = null;
 let freezed = false;
-let assets: AssetRecord = {}
+let assets: Record<string, AssetVendor> = {}
 
 const main = () => {
   // const t0 = window.performance.now();
-  Object.entries(assets)
-    .forEach(([_, asset]) => {
+  Object.keys(assets)
+    .forEach((key) => {
+      const asset = assets[key]
       const el = tradeEl!.querySelector(asset.elCSSSelector) as HTMLElement
       if (!el) {
         // throw new Error(`can not find element by selector: ${asset.elCSSSelector}`)
