@@ -79,7 +79,7 @@ export class PalmCivetService {
       .then(async (res) => {
         await this.localRepository.upsert(res)
         this.palmCivet = PalmCivetModel.mapFrom(res)
-        return;
+        return Promise.resolve();
       });
   }
 

@@ -7,7 +7,7 @@ import App from "./App.vue";
 import {globalx} from "@/classifed/globalx";
 import {ExtMessagesIdentities} from "@/classifed/ext-messages";
 import {ElMessage} from "element-plus";
-import {TradeFetchTypes} from "../../../../../Vela/src/l10n";
+import {TradeFetchTypes} from "@poe-vela/core/l10n";
 
 const port = Ext.message.connect(ExtMessagePortID.ContentScript)
 globalx.port = port;
@@ -33,28 +33,6 @@ timer = setInterval(() => {
     clearInterval(timer)
   }
 }, 10)
-
-// Ext.message
-//   .post(port, {
-//     identify: "普通发送",
-//     payload: 222,
-//   })
-//
-// Ext.message
-//   .post$(port, {
-//     identify: "Promise 发哦那个",
-//     payload: "我是 content 发送的， 等待 promise.then",
-//   })
-//   .then(res => {
-//     console.log("main.ts", "Promise", res)
-//   })
-//
-// Ext
-//   .message
-//   .addListener
-//   .message(port, message => {
-//     console.log("main.ts", "接受消息", message)
-//   })
 
 window.addEventListener("message", event => {
   if (event.data && event.data.type === "req:ASSASSIN") {

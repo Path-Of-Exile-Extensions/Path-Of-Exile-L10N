@@ -2,7 +2,9 @@ import {addRxPlugin, createRxDatabase, RxDatabase} from "rxdb";
 import {getRxStorageDexie} from "rxdb/plugins/storage-dexie";
 import {JustLogger} from "../atomic";
 import {RxDBDevModePlugin} from 'rxdb/plugins/dev-mode';
+import {RxDBMigrationPlugin} from 'rxdb/plugins/migration';
 
+addRxPlugin(RxDBMigrationPlugin);
 addRxPlugin(RxDBDevModePlugin);
 
 export class DB {

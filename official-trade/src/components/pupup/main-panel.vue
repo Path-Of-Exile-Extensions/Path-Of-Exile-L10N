@@ -49,7 +49,7 @@
 import {LanguageIdentities} from "@poe-vela/core/l10n";
 import {PreferenceEntity} from "@poe-vela/l10n-ext";
 import usePoeVelaL10nPopup from "@/classifed/use-poe-vela-l10n.popup";
-import {computed, ref} from "vue";
+import {computed, ref, watch} from "vue";
 import MutableIcon from "@/components/mutable-icon.vue";
 
 const hasChanged = ref(false);
@@ -60,22 +60,18 @@ const handleEnableTranslationChange = () => {
   poeVelaL10n.actions.updatePreference({
     enableTranslation: !poeVelaL10n.state.preference.enableTranslation,
   })
-  hasChanged.value = true;
 }
 
 const handleLanguageChange = (language: LanguageIdentities) => {
   poeVelaL10n.actions.updatePreference({language: language} as Partial<PreferenceEntity>)
-  hasChanged.value = true;
 }
 
 const handleAssetUpdate = () => {
   poeVelaL10n.actions.updateAssets()
-  hasChanged.value = true;
 }
 
 const handleRestore = () => {
   poeVelaL10n.actions.restore()
-  hasChanged.value = true;
 }
 
 const buttonState = computed(() => {
@@ -83,7 +79,13 @@ const buttonState = computed(() => {
     return 0;
   }
   if (poeVelaL10n.state.isUpdateAssetsResult !== "none") {
-    return poeVelaL10n.state.isUpdateAssetsResult === "success" ? 1 : 2;
+    return poeVelaL10n.state.isUpdateAssetsResult === "successful" ? 1 : 2;
+  }
+})
+
+watch([() => poeVelaL10n.state.isInitial, poeVelaL10n.state], () => {
+  if (poeVelaL10n.state.isInitial) {
+    hasChanged.value = true;
   }
 })
 

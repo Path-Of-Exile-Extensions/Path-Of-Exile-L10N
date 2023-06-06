@@ -3,7 +3,7 @@ import {PalmCivet} from "./palm-civet";
 
 const _PalmCivetSchemaLiteral = {
   title: 'PalmCivet',
-  version: 0,
+  version: 1,
   primaryKey: 'lang',
   type: 'object',
   properties: {

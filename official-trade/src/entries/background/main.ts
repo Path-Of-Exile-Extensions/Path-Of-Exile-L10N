@@ -55,16 +55,6 @@ Ext.message.onConnect(port => {
           )
         }
         break;
-      case ExtMessagesIdentities["PalmCivet:Update"]:
-        await PalmCivetService.Instance.forceUpdate();
-        Ext.message.multicast(
-          portStore.values(),
-          {
-            identify: ExtMessagesIdentities["PalmCivet:Updated"],
-            payload: PalmCivetService.Instance.palmCivet,
-          }
-        )
-        break;
       case ExtMessagesIdentities.Restore:
         await PreferenceService.Instance.deleteAll();
         await PalmCivetService.Instance.deleteAll();
@@ -82,6 +72,16 @@ Ext.message.onConnect(port => {
     switch (message.identify) {
       case ExtMessagesIdentities["PalmCivet:Get"]:
         return await PalmCivetService.Instance.get();
+      case ExtMessagesIdentities["PalmCivet:Update"]:
+        await PalmCivetService.Instance.forceUpdate();
+        Ext.message.multicast(
+          portStore.values(),
+          {
+            identify: ExtMessagesIdentities["PalmCivet:Updated"],
+            payload: PalmCivetService.Instance.palmCivet,
+          }
+        )
+        return true;
       case ExtMessagesIdentities.Initialize:
         return getViewData();
       case ExtMessagesIdentities["Preflight"]:

@@ -2,6 +2,7 @@ import {RepositoryBase, RxRepositoryBase} from "@poe-vela/l10n-ext";
 import {PalmCivetSchemaLiteral} from "./palm-civet.schema";
 import {getPalmCivetFileNames, PalmCivet} from './palm-civet'
 import {AssetChecksum, LanguageIdentities} from "@poe-vela/core/l10n";
+import {identity} from "lodash-es";
 
 export class StaticLocalRepository extends RxRepositoryBase<PalmCivet> {
   get dbName() {
@@ -11,7 +12,10 @@ export class StaticLocalRepository extends RxRepositoryBase<PalmCivet> {
   async initialize(): Promise<void> {
     await this.database.addCollections({
       [this.dbName]: {
-        schema: PalmCivetSchemaLiteral
+        schema: PalmCivetSchemaLiteral,
+        migrationStrategies: {
+          1: identity,
+        },
       },
     });
     return Promise.resolve(undefined);
@@ -30,7 +34,7 @@ export class StaticRemoteRepository extends RepositoryBase<PalmCivet> {
       )
       .then(res => Promise.all(res.map(i => i.text())))
       .then((
-        [checksums, common, items,_static, stats, statsFlat, menuSearch, full, gemFlat, gemNames, gemStatsFlat]
+        [checksums, common, items, _static, stats, statsFlat, menuSearch, full, gemFlat, gemNames, gemStatsFlat]
       ) => {
         return {
           checksums,

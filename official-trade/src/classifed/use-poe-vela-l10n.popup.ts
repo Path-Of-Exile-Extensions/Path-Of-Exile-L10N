@@ -9,15 +9,18 @@ export type POEVelaL10NPopupViewState = {
   // 是否正在更新资产
   isUpdatingAssets: boolean,
   // 更新资产结果
-  isUpdateAssetsResult: "none" | "success" | "fail",
+  isUpdateAssetsResult: "none" | "successful" | "failed",
   // 用户偏好
   preference: PreferenceEntity
+  // 是否初始化基础数据完成
+  isInitial: boolean
 }
 
 const initState: POEVelaL10NPopupViewState = {
   isUpdateAssetsResult: "none",
   isUpdatingAssets: false,
-  preference: PreferenceEntityDefault
+  preference: PreferenceEntityDefault,
+  isInitial: false,
 }
 
 export default defineStore('poe-vela-l10n-popup', () => {
@@ -52,10 +55,19 @@ export default defineStore('poe-vela-l10n-popup', () => {
     },
     async updateAssets() {
       state.isUpdatingAssets = true;
-      Ext.message.post(
-        globalx.port!,
-        {identify: ExtMessagesIdentities["PalmCivet:Update"],}
-      )
+      return Ext.message
+        .post$(
+          globalx.port!,
+          {identify: ExtMessagesIdentities["PalmCivet:Update"],}
+        )
+        .then(() => {
+          state.isUpdatingAssets = false;
+          state.isUpdateAssetsResult = "successful"
+        })
+        .catch(err => {
+          state.isUpdatingAssets = false;
+          state.isUpdateAssetsResult = "failed"
+        })
     },
     async restore() {
       Object.assign(state, initState)
@@ -86,9 +98,6 @@ export default defineStore('poe-vela-l10n-popup', () => {
             case ExtMessagesIdentities["Preference:Changed"]:
               state.preference = message.payload;
               break;
-            case ExtMessagesIdentities["PalmCivet:Update"]:
-              state.isUpdatingAssets = false;
-              state.isUpdateAssetsResult = message.payload ? "success" : "fail"
           }
         }
       )
