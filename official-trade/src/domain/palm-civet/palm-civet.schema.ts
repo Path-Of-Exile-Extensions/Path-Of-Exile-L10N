@@ -3,7 +3,7 @@ import {PalmCivet} from "./palm-civet";
 
 const _PalmCivetSchemaLiteral = {
   title: 'PalmCivet',
-  version: 1,
+  version: 2,
   primaryKey: 'lang',
   type: 'object',
   properties: {
@@ -27,7 +27,7 @@ const _PalmCivetSchemaLiteral = {
     stats: {
       type: 'string',
     },
-    statsFlat: {
+    statsIdFlat: {
       type: 'string',
     },
     menuSearch: {
@@ -43,6 +43,9 @@ const _PalmCivetSchemaLiteral = {
       type: 'string',
     },
     gemFlat: {
+      type: 'string',
+    },
+    itemsBoth: {
       type: 'string',
     }
   },

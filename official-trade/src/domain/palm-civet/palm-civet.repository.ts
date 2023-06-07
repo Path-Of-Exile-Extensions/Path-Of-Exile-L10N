@@ -1,8 +1,9 @@
 import {RepositoryBase, RxRepositoryBase} from "@poe-vela/l10n-ext";
 import {PalmCivetSchemaLiteral} from "./palm-civet.schema";
-import {getPalmCivetFileNames, PalmCivet} from './palm-civet'
+import {PalmCivet} from './palm-civet'
 import {AssetChecksum, LanguageIdentities} from "@poe-vela/core/l10n";
 import {identity} from "lodash-es";
+import {PalmCivetFiles} from "./palm-civet-files";
 
 export class StaticLocalRepository extends RxRepositoryBase<PalmCivet> {
   get dbName() {
@@ -15,6 +16,7 @@ export class StaticLocalRepository extends RxRepositoryBase<PalmCivet> {
         schema: PalmCivetSchemaLiteral,
         migrationStrategies: {
           1: identity,
+          2: identity,
         },
       },
     });
@@ -29,27 +31,18 @@ export class StaticRemoteRepository extends RepositoryBase<PalmCivet> {
   all(): Promise<PalmCivet> {
     return Promise
       .all(
-        getPalmCivetFileNames()
-          .map(fileName => fetch(base + fileName, {cache: "no-store"}))
+        PalmCivetFiles.files.map(async(file) => fetch(base + file.fileName, {cache: "no-store"}))
       )
-      .then(res => Promise.all(res.map(i => i.text())))
-      .then((
-        [checksums, common, items, _static, stats, statsFlat, menuSearch, full, gemFlat, gemNames, gemStatsFlat]
-      ) => {
-        return {
-          checksums,
-          common,
-          items,
-          static: _static,
-          stats,
-          statsFlat,
-          menuSearch,
-          lang: LanguageIdentities["zh-Hans"],
-          full,
-          gemFlat,
-          gemNames,
-          gemStatsFlat,
-        }
+      .then((results) => {
+        return Promise.all(results.map(res => res.text()))
+      })
+      .then(result => {
+        return result.reduce((prev, curr, currentIndex) => {
+          return {
+            ...prev,
+            [PalmCivetFiles.files[currentIndex].fileField]: curr,
+          }
+        }, { lang: LanguageIdentities["zh-Hans"] } as PalmCivet)
       })
   }
 

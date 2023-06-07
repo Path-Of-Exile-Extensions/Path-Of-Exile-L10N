@@ -1,6 +1,7 @@
 import {StaticLocalRepository, StaticRemoteRepository} from "./palm-civet.repository";
 import {PalmCivetModel} from "./palm-civet";
 import {AssetChecksum, LanguageIdentities} from "@poe-vela/core/l10n";
+import {PalmCivetFiles} from "./palm-civet-files";
 
 export class PalmCivetService {
   // 单例
@@ -33,7 +34,7 @@ export class PalmCivetService {
     await this.remoteRepository.initialize();
     const data = await this.localRepository.findOne()
     if (data) {
-      this.palmCivet = PalmCivetModel.mapFrom(data)
+      this.palmCivet = PalmCivetFiles.toPalmModel(data)
       this.isInitialized = true;
     }
   }
@@ -53,13 +54,14 @@ export class PalmCivetService {
   async update(): Promise<PalmCivetModel> {
     const data = await this.localRepository.findOne()
     if (data) {
-      const modal = PalmCivetModel.mapFrom(data)
+      const modal = PalmCivetFiles.toPalmModel(data)
       const checksum = await this.remoteRepository.checksum();
       const result = AssetChecksum.diffrences(checksum, modal.checksums)
       for (const [fileName] of result) {
-        const file = await this.remoteRepository.fetch(fileName)
+        const response = await this.remoteRepository.fetch(fileName)
+        const file = PalmCivetFiles.findByName(fileName)!
         await this.localRepository.upsert({
-          [PalmCivetModel.fileNameToField(fileName)]: await file.text(),
+          [file.fileField]: await response.text(),
           lang: LanguageIdentities["zh-Hans"]
         })
       }
@@ -69,7 +71,7 @@ export class PalmCivetService {
     return this.remoteRepository.all()
       .then(async (res) => {
         await this.localRepository.upsert(res)
-        this.palmCivet = PalmCivetModel.mapFrom(res)
+        this.palmCivet = PalmCivetFiles.toPalmModel(data)
         return this.palmCivet;
       });
   }
@@ -78,7 +80,7 @@ export class PalmCivetService {
     return this.remoteRepository.all()
       .then(async (res) => {
         await this.localRepository.upsert(res)
-        this.palmCivet = PalmCivetModel.mapFrom(res)
+        this.palmCivet = PalmCivetFiles.toPalmModel(res)
         return Promise.resolve();
       });
   }
