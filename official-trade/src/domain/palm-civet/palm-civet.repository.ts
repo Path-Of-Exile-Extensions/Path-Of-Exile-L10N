@@ -1,4 +1,4 @@
-import {RepositoryBase, RxRepositoryBase} from "@poe-vela/l10n-ext";
+import {PreferenceService, RepositoryBase, RxRepositoryBase} from "@poe-vela/l10n-ext";
 import {PalmCivetSchemaLiteral} from "./palm-civet.schema";
 import {PalmCivet} from './palm-civet'
 import {AssetChecksum, LanguageIdentities} from "@poe-vela/core/l10n";
@@ -25,33 +25,46 @@ export class StaticLocalRepository extends RxRepositoryBase<PalmCivet> {
 
 }
 
-const base = "https://raw.githubusercontent.com/Path-Of-Exile-Vela/L10N-Assets/master/zh-Hans/"
-
 export class StaticRemoteRepository extends RepositoryBase<PalmCivet> {
+
+  get assetHost() {
+    const preference = PreferenceService.Instance.preference;
+    const host = `${preference.assetServer}/master/${PreferenceService.Instance.preference.language}/`
+    if (preference.assetProxy) {
+      return preference.assetProxy + host;
+    } else {
+      return host;
+    }
+  }
+
   all(): Promise<PalmCivet> {
     return Promise
       .all(
-        PalmCivetFiles.files.map(async(file) => fetch(base + file.fileName, {cache: "no-store"}))
+        PalmCivetFiles.files.map(async (file) => fetch(this.assetHost + file.fileName, {cache: "no-store"}))
       )
       .then((results) => {
         return Promise.all(results.map(res => res.text()))
       })
       .then(result => {
         return result.reduce((prev, curr, currentIndex) => {
-          return {
-            ...prev,
-            [PalmCivetFiles.files[currentIndex].fileField]: curr,
-          }
-        }, { lang: LanguageIdentities["zh-Hans"] } as PalmCivet)
+            return {
+              ...prev,
+              [PalmCivetFiles.files[currentIndex].fileField]: curr,
+            }
+          },
+          {
+            lang: PreferenceService.Instance.preference.language
+          } as PalmCivet
+        )
       })
   }
 
   fetch(fileName: string) {
-    return fetch(base + fileName, {cache: "no-store"})
+    return fetch(this.assetHost + fileName, {cache: "no-store"})
   }
 
   checksum(): Promise<AssetChecksum[]> {
-    return fetch(base + `checksums.min.json`, {cache: "no-store"})
+    return fetch(this.assetHost + `checksums.min.json`, {cache: "no-store"})
       .then(res => res.json())
   }
 

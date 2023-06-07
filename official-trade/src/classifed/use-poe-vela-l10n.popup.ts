@@ -1,9 +1,10 @@
-import {getCurrentInstance, onMounted, reactive} from 'vue'
+import {getCurrentInstance, onMounted, reactive, ref} from 'vue'
 import {Ext} from "@poe-vela/core/browser";
 import {ExtMessagesIdentities} from "./ext-messages";
 import {defineStore} from "pinia";
 import {PreferenceEntity, PreferenceEntityDefault} from "@poe-vela/l10n-ext";
 import {globalx} from "@/classifed/globalx";
+import {TestConnectivityResult} from "../../../../Vela/src";
 
 export type POEVelaL10NPopupViewState = {
   // 是否正在更新资产
@@ -25,6 +26,8 @@ const initState: POEVelaL10NPopupViewState = {
 
 export default defineStore('poe-vela-l10n-popup', () => {
   const state = reactive<POEVelaL10NPopupViewState>(initState)
+  // 测速结果
+  const testConnectivityResult = ref<TestConnectivityResult | null>(null)
 
   const actions = {
     initial(_state: { preference: PreferenceEntity }) {
@@ -77,6 +80,13 @@ export default defineStore('poe-vela-l10n-popup', () => {
           identify: ExtMessagesIdentities.Restore,
         }
       )
+    },
+    testAssetServer() {
+      return Ext.message.post$(globalx.port!, {identify: ExtMessagesIdentities.TestAssetServer})
+        .then((res: TestConnectivityResult) => {
+          testConnectivityResult.value = res;
+          return res;
+        })
     }
   }
 
@@ -107,5 +117,6 @@ export default defineStore('poe-vela-l10n-popup', () => {
   return {
     state: state,
     actions: actions,
+    testConnectivityResult,
   }
 })

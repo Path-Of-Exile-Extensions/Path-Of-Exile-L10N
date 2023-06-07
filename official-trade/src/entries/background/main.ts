@@ -5,6 +5,7 @@ import {ExtMessagesIdentities} from "@/classifed/ext-messages";
 import {PreferenceService} from "@poe-vela/l10n-ext";
 import {PalmCivetService} from "@/domain/palm-civet";
 import {PreflightMessageHandler} from "./message-handles";
+import {TestAssetServerMessageHandler} from "@/entries/background/message-handles/test-asset-server.message-handler";
 
 const getViewData = () => {
   return {
@@ -58,6 +59,7 @@ Ext.message.onConnect(port => {
       case ExtMessagesIdentities.Restore:
         await PreferenceService.Instance.deleteAll();
         await PalmCivetService.Instance.deleteAll();
+        Ext.message.multicast(portStore.values(), {identify: ExtMessagesIdentities.Restore})
         break;
       case ExtMessagesIdentities.Reload:
         chrome.runtime.reload()
@@ -84,8 +86,10 @@ Ext.message.onConnect(port => {
         return true;
       case ExtMessagesIdentities.Initialize:
         return getViewData();
-      case ExtMessagesIdentities["Preflight"]:
+      case ExtMessagesIdentities.Preflight:
         return new PreflightMessageHandler().handle(message, statsFlat)
+      case ExtMessagesIdentities.TestAssetServer:
+        return new TestAssetServerMessageHandler().handle(message);
     }
 
     return message.payload;

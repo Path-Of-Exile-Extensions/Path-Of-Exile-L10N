@@ -18,6 +18,11 @@ export class PreferenceService {
     return PreferenceService.instance;
   }
 
+  // 是否为默认语言
+  get isDefaultLanguage(): boolean {
+    return this.preference.language === PreferenceEntityDefault.language;
+  }
+
   constructor(
     private readonly preferenceRepository: PreferenceRepository,
   ) {

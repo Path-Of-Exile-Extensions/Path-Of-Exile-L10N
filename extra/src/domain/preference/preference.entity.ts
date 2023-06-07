@@ -22,6 +22,10 @@ export type PreferenceEntity = {
   enableTranslation: boolean;
   // 是否启用自定义翻译
   enableCustomTranslation: boolean;
+  // 自定义资产代理
+  assetProxy?: string;
+  // 自定义资产服务器
+  assetServer?: string;
 }
 
 export const PreferenceEntityDefault: PreferenceEntity = {
@@ -30,4 +34,6 @@ export const PreferenceEntityDefault: PreferenceEntity = {
   presentationMode: PresentationMode.Whole,
   enableTranslation: false,
   enableCustomTranslation: false,
+  assetProxy: undefined,
+  assetServer: `https://raw.githubusercontent.com/Path-Of-Exile-Vela/L10N-Assets/`,
 }

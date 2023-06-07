@@ -39,6 +39,23 @@ export default defineStore('poe-vela-l10n-content-script', () => {
     restore() {
       PalmCivetModel.restore();
     },
+    /**
+     * 更新用户偏好, 然后同步到本地
+     * @param preference
+     */
+    async updatePreference(preference: Partial<PreferenceEntity>) {
+      const newPreference = {
+        ...state.preference,
+        ...preference,
+      }
+
+      Ext.message.post(
+        globalx.port!,
+        {identify: ExtMessagesIdentities["Preference:Update"], payload: newPreference,}
+      )
+
+      state.preference = newPreference;
+    },
   }
 
   if (getCurrentInstance()) {
@@ -56,6 +73,9 @@ export default defineStore('poe-vela-l10n-content-script', () => {
           case ExtMessagesIdentities["Preference:Changed"]:
             state.preference = message.payload;
             break;
+          case ExtMessagesIdentities["PalmCivet:Updated"]:
+            state.palmCivet = message.payload;
+            break;
           case ExtMessagesIdentities.Restore:
             actions.restore();
             ElMessage({
@@ -64,8 +84,6 @@ export default defineStore('poe-vela-l10n-content-script', () => {
               showClose: true,
             })
             break;
-          case ExtMessagesIdentities["PalmCivet:Updated"]:
-            state.palmCivet = message.payload;
         }
         return undefined;
       })

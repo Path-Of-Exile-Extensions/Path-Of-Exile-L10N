@@ -1,6 +1,7 @@
 import {PreferenceSchemaLiteral} from "./preference.schema";
 import {PreferenceEntity} from "./preference.entity";
 import {RxRepositoryBase} from "../../atomic/rx-repository";
+import {identity} from "@poe-vela/core";
 
 export class PreferenceRepository extends RxRepositoryBase<PreferenceEntity> {
   get dbName(): string {
@@ -10,7 +11,10 @@ export class PreferenceRepository extends RxRepositoryBase<PreferenceEntity> {
   async initialize(): Promise<any> {
     await this.database.addCollections({
       [this.dbName]: {
-        schema: PreferenceSchemaLiteral
+        schema: PreferenceSchemaLiteral,
+        migrationStrategies: {
+          1: identity,
+        }
       },
     });
     return Promise.resolve()

@@ -1,9 +1,9 @@
 import type {RxJsonSchema} from "rxdb";
 import {PreferenceEntity} from "./preference.entity";
 
-const _PreferenceSchemaLiteral = {
+export const PreferenceSchemaLiteral: RxJsonSchema<PreferenceEntity> = {
   title: 'preference',
-  version: 0,
+  version: 1,
   primaryKey: 'id',
   type: 'object',
   properties: {
@@ -24,8 +24,12 @@ const _PreferenceSchemaLiteral = {
     enableCustomTranslation: {
       type: 'boolean',
     },
+    assetProxy: {
+      type: 'string',
+    },
+    assetServer: {
+      type: 'string',
+    }
   },
   required: ["id"],
 } as const
-
-export const PreferenceSchemaLiteral: RxJsonSchema<PreferenceEntity> = _PreferenceSchemaLiteral;

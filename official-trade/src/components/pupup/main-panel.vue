@@ -39,6 +39,7 @@
             <span class="pl-1">更新资产</span>
           </el-button>
           <el-button @click="handleRestore">还原</el-button>
+          <el-button @click="openOptions">高级设置</el-button>
         </el-button-group>
       </el-form-item>
     </el-form>
@@ -47,6 +48,7 @@
 </template>
 <script setup lang="ts">
 import {LanguageIdentities} from "@poe-vela/core/l10n";
+import {Ext} from "@poe-vela/core/browser"
 import {PreferenceEntity} from "@poe-vela/l10n-ext";
 import usePoeVelaL10nPopup from "@/classifed/use-poe-vela-l10n.popup";
 import {computed, ref, watch} from "vue";
@@ -72,6 +74,10 @@ const handleAssetUpdate = () => {
 
 const handleRestore = () => {
   poeVelaL10n.actions.restore()
+}
+
+const openOptions = () => {
+  Ext.tabs.create({ 'url': 'chrome://extensions/?options=' + Ext.get.runtime.id })
 }
 
 const buttonState = computed(() => {

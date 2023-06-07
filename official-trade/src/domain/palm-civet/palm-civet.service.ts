@@ -41,6 +41,7 @@ export class PalmCivetService {
 
   deleteAll() {
     this.palmCivet = PalmCivetModel.empty();
+    this.isInitialized = false;
     return this.localRepository.deleteAll()
   }
 

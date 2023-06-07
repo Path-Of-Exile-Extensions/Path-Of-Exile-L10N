@@ -16,6 +16,8 @@ export enum ExtMessagesIdentities {
   "PalmCivet:Get" = "PalmCivet:Get",
   // 还原
   "Restore" = "Restore",
+  // 测试访问资产服务器的速度
+  "TestAssetServer" = "TestAssetServer",
   // 预检
   "Preflight" = "Preflight",
 }
