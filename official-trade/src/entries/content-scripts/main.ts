@@ -8,6 +8,7 @@ import {globalx} from "@/classifed/globalx";
 import {ExtMessagesIdentities} from "@/classifed/ext-messages";
 import {ElMessage} from "element-plus";
 import {TradeFetchTypes} from "@poe-vela/core/l10n";
+import {PreferenceService} from "@poe-vela/l10n-ext";
 
 const port = Ext.message.connect(ExtMessagePortID.ContentScript)
 globalx.port = port;
@@ -35,23 +36,36 @@ timer = setInterval(() => {
 }, 10)
 
 window.addEventListener("message", event => {
+  const preferenceService = PreferenceService.Instance
+  const result = event.data?.data?.result;
+  if (!result) {
+    return
+  }
+  // 如果没有启用翻译
   if (event.data && event.data.type === "req:ASSASSIN") {
+    if (!preferenceService.preference.enableTranslation) {
+      window.postMessage({
+        type: "res:ASSASSIN",
+        data: JSON.stringify({result: result}),
+        id: event.data.id,
+      }, "*")
+      return
+    }
     Ext.message
       .post$(
         port,
         {
           identify: ExtMessagesIdentities["Preflight"],
-          payload: event.data.data.result as TradeFetchTypes.Result[],
+          payload: result
         },
         5000
       )
       .catch((err) => {
         const error = `[POE Vela L10N]: Connect Background Failed`
-        console.warn(error, err)
         ElMessage.warning({
           message: error,
         })
-        return event.data.data.result as TradeFetchTypes.Result[];
+        return result
       })
       .then(res => {
         window.postMessage({

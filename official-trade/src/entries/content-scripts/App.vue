@@ -9,14 +9,16 @@
 </template>
 <script setup lang="ts">
 import {onMounted, watch} from "vue";
-import {AssetRecord, AssetVendor, AssetVendorMinimizeModel} from "@poe-vela/core/l10n";
-import {MenuType, TradeController} from "@poe-vela/core/browser";
+import {AssetVendor, AssetVendorMinimizeModel} from "@poe-vela/core/l10n";
+import {Ext, TradeController} from "@poe-vela/core/browser";
 import {useElementVirtualRef} from "@/classifed/use-element-virtual-ref";
 import usePoeVelaL10nContentScript from "@/classifed/use-poe-vela-l10n.content-script";
-import {Search} from "@/classifed/dom-observer";
 import {PalmCivetModel} from "@/domain/palm-civet";
+import {globalx} from "@/classifed/globalx";
+import {ExtMessagesIdentities} from "@/classifed/ext-messages";
+import {ElMessage} from "element-plus";
 
-const poeVelaL10n = usePoeVelaL10nContentScript();
+const poeVelaL10N = usePoeVelaL10nContentScript();
 
 const elementVirtualRef = useElementVirtualRef();
 
@@ -49,7 +51,7 @@ const main = () => {
 
 const search = () => {
   tradeEl = document.querySelector("#trade")!
-  assets = AssetVendorMinimizeModel.decode(poeVelaL10n.state.palmCivet!.menuSearch);
+  assets = AssetVendorMinimizeModel.decode(poeVelaL10N.palmCivet!.menuSearch!);
   const el = tradeEl.querySelector(".search-bar.search-advanced");
   const observer = new MutationObserver(
     () => {
@@ -75,13 +77,52 @@ onMounted(async () => {
   await tradeController.initialize();
 })
 
-watch([() => poeVelaL10n.state.preference.enableTranslation, () => poeVelaL10n.state.palmCivet], ([enableTranslation, palmCivet]: [boolean, PalmCivetModel]) => {
-  if (enableTranslation && palmCivet && tradeController.menuType === MenuType.Search) {
-    search()
-    Search.Results.observer()
-  }
+
+onMounted(async () => {
+  Ext.message.post$(globalx.port!, {identify: ExtMessagesIdentities.Initialize})
+    .then(res => {
+      poeVelaL10N.initial(res)
+    })
+
+  Ext.message.addListener.message(globalx.port!, message => {
+    switch (message.identify) {
+      case ExtMessagesIdentities.ReInitialize:
+        poeVelaL10N.initial(message.payload)
+        break;
+      case ExtMessagesIdentities["Preference:Changed"]:
+        poeVelaL10N.preference = message.payload;
+        if (!poeVelaL10N.preference.enableTranslation) {
+          poeVelaL10N.restore();
+        }
+        break;
+      case ExtMessagesIdentities["PalmCivet:Updated"]:
+        poeVelaL10N.palmCivet = message.payload;
+        break;
+      case ExtMessagesIdentities.Restore:
+        poeVelaL10N.restore();
+        ElMessage({
+          message: '[POE-Vela] 检测到配置项改变, 刷新页面后生效',
+          duration: 999999999,
+          showClose: true,
+        })
+        break;
+    }
+    return undefined;
+  })
 })
 
+watch(poeVelaL10N.$state, () => {
+  if (poeVelaL10N.preference.enableTranslation) {
+    if (poeVelaL10N.palmCivet) {
+      PalmCivetModel.substitutes(poeVelaL10N.palmCivet! as PalmCivetModel)
+      search()
+    } else {
+      poeVelaL10N.GetPalmCivet();
+    }
+  } else {
+    poeVelaL10N.restore();
+  }
+})
 
 </script>
 <style scoped>

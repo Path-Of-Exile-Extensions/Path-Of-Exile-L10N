@@ -5,6 +5,7 @@ import {defineStore} from "pinia";
 import {PreferenceEntity, PreferenceEntityDefault} from "@poe-vela/l10n-ext";
 import {globalx} from "@/classifed/globalx";
 import {TestConnectivityResult} from "../../../../Vela/src";
+import {executeAtLeast} from "../../../../Vela";
 
 export type POEVelaL10NPopupViewState = {
   // 是否正在更新资产
@@ -37,6 +38,7 @@ export default defineStore('poe-vela-l10n-popup', () => {
           ..._state.preference,
         };
       }
+      state.isInitial = true;
     },
 
     /**
@@ -82,8 +84,11 @@ export default defineStore('poe-vela-l10n-popup', () => {
       )
     },
     testAssetServer() {
-      return Ext.message.post$(globalx.port!, {identify: ExtMessagesIdentities.TestAssetServer})
-        .then((res: TestConnectivityResult) => {
+      return executeAtLeast<TestConnectivityResult>(
+        Ext.message.post$(globalx.port!, {identify: ExtMessagesIdentities.TestAssetServer}),
+        1000
+      )
+        .then((res) => {
           testConnectivityResult.value = res;
           return res;
         })

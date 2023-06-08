@@ -38,7 +38,7 @@
             <mutable-icon :state="buttonState"/>
             <span class="pl-1">更新资产</span>
           </el-button>
-          <el-button @click="handleRestore">还原</el-button>
+          <el-button @click="handleRestore">重置</el-button>
           <el-button @click="openOptions">高级设置</el-button>
         </el-button-group>
       </el-form-item>
@@ -77,7 +77,7 @@ const handleRestore = () => {
 }
 
 const openOptions = () => {
-  Ext.tabs.create({ 'url': 'chrome://extensions/?options=' + Ext.get.runtime.id })
+  Ext.tabs.create({'url': 'chrome://extensions/?options=' + Ext.get.runtime.id})
 }
 
 const buttonState = computed(() => {
@@ -89,9 +89,20 @@ const buttonState = computed(() => {
   }
 })
 
-watch([() => poeVelaL10n.state.isInitial, poeVelaL10n.state], () => {
-  if (poeVelaL10n.state.isInitial) {
+/**
+ * 用来判断是否初始化完成, 如果初始化完成, 则判断配置项是否有改变
+ */
+const isInitial = ref(false)
+
+watch(() => poeVelaL10n.state.preference, () => {
+  if (isInitial.value) {
     hasChanged.value = true;
+  }
+}, {deep: true})
+
+watch(() => poeVelaL10n.state.isInitial, (newValue, oldValue) => {
+  if (!oldValue && newValue) {
+    isInitial.value = true
   }
 })
 

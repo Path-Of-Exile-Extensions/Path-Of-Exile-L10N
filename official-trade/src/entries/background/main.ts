@@ -1,5 +1,4 @@
 import {Ext, PortStore} from "@poe-vela/core/browser";
-import {clone} from "lodash-es";
 import initialize from "./classifed/initialize";
 import {ExtMessagesIdentities} from "@/classifed/ext-messages";
 import {PreferenceService} from "@poe-vela/l10n-ext";
@@ -35,17 +34,16 @@ Ext.message.onConnect(port => {
     await initialize();
     switch (message.identify) {
       case ExtMessagesIdentities["Preference:Update"]:
-        const old = clone(PreferenceService.Instance.preference);
         await PreferenceService.Instance.upsert(message.payload);
-        Ext.message.post(
-          port,
+        Ext.message.multicast(
+          portStore.values(),
           {
             identify: ExtMessagesIdentities["Preference:Changed"],
             payload: message.payload,
           }
         )
-        // 如果之前没有启用翻译, 现在启用了, 则需要更新资产文件
-        if (!old.enableTranslation && PreferenceService.Instance.preference.enableTranslation) {
+        // 如果启用翻译后资产文件不存在则需要更新资产文件
+        if (PreferenceService.Instance.preference.enableTranslation && !PalmCivetService.Instance.palmCivet) {
           await PalmCivetService.Instance.forceUpdate();
           Ext.message.multicast(
             portStore.values(),

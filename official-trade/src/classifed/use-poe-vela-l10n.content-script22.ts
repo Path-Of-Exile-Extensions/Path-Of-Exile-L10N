@@ -1,8 +1,10 @@
+import {getCurrentInstance, onMounted, reactive, ref, shallowReactive, shallowRef, watch} from 'vue'
 import {Ext} from "@poe-vela/core/browser";
 import {ExtMessagesIdentities} from "./ext-messages";
 import {defineStore} from "pinia";
 import {PreferenceEntity, PreferenceEntityDefault} from "@poe-vela/l10n-ext";
 import {PalmCivetModel} from "@/domain/palm-civet";
+import {ElMessage} from "element-plus";
 import {globalx} from "@/classifed/globalx";
 
 export type POEVelaL10NViewState = {
@@ -12,36 +14,36 @@ export type POEVelaL10NViewState = {
   palmCivet: PalmCivetModel | undefined;
 }
 
-export default defineStore('poe-vela-l10n-content-script', {
-  state: (): POEVelaL10NViewState => ({
-    preference: PreferenceEntityDefault,
-    palmCivet: undefined,
-  }),
-  actions: {
+export default defineStore('poe-vela-l10n-content-script', () => {
+  const preference = ref(PreferenceEntityDefault)
+  const palmCivet = shallowRef<PalmCivetModel | undefined>(undefined)
+
+  const actions = {
     initial(_state: { preference: PreferenceEntity }) {
       if (_state.preference) {
-        this.preference = {
-          ...this.preference,
+        preference.value = {
+          ...preference.value,
           ..._state.preference,
         };
       }
     },
     GetPalmCivet() {
-      return Ext.message
+      Ext.message
         .post$<PalmCivetModel>(globalx.port!, {identify: ExtMessagesIdentities["PalmCivet:Get"]})
         .then((res) => {
-          this.palmCivet = res;
+          palmCivet.value = res;
         })
     },
     restore() {
-      return PalmCivetModel.restore();
+      PalmCivetModel.restore();
     },
     /**
      * 更新用户偏好, 然后同步到本地
+     * @param _preference
      */
     async updatePreference(_preference: Partial<PreferenceEntity>) {
       const newPreference = {
-        ...this.preference,
+        ...preference.value,
         ..._preference,
       }
 
@@ -50,7 +52,14 @@ export default defineStore('poe-vela-l10n-content-script', {
         {identify: ExtMessagesIdentities["Preference:Update"], payload: newPreference,}
       )
 
-      this.preference = newPreference;
+      preference.value = newPreference;
     },
-  },
+  }
+
+
+  return {
+    preference,
+    palmCivet,
+    actions: actions,
+  }
 })

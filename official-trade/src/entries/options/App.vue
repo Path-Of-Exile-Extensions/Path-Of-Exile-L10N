@@ -30,7 +30,7 @@
             @click="testAssetServer"
           >
             <mutable-icon :state="bottonState"/>
-            <span class="pl-1">测速</span>
+            <span class="pl-1">测速 {{ poeVelaL10n.testConnectivityResult ? poeVelaL10n.testConnectivityResult.latency + " /ms" : "" }}</span>
           </el-button>
         </el-button-group>
       </el-form-item>
@@ -54,11 +54,11 @@
           </el-button>
         </el-button-group>
       </el-form-item>
-      <el-form-item label="造血">
+      <el-form-item label="感谢">
         <div class="inline-block text-left">
           POE Vela L10n 项目的诞生离不开
           <el-link target="_blank" type="primary" href="https://poedb.tw/us/">PoEDB</el-link>
-          开发的百科数据, 如果您有意向支持 POE Vela 项目的发展, 请优先考虑对
+          整理并开放的百科数据, 如果您有意向支持 POE Vela 项目的发展, 请优先考虑对
           <el-link target="_blank" type="primary" href="https://poedb.tw/us/">PoEDB</el-link>
           进行
           <el-link target="_blank" type="primary" href="https://poedb.tw/us/patreon">捐赠</el-link>
@@ -120,7 +120,7 @@
 import {PreferenceEntityDefault} from "@poe-vela/l10n-ext";
 import usePoeVelaL10nPopup from "@/classifed/use-poe-vela-l10n.popup";
 import MutableIcon from "@/components/mutable-icon.vue";
-import {ElMessage} from "element-plus";
+import {ElNotification} from "element-plus";
 import {computed} from "vue";
 
 const poeVelaL10n = usePoeVelaL10nPopup();
@@ -133,7 +133,7 @@ const handleSave = () => {
     assetProxy: poeVelaL10n.state.preference.assetProxy,
     assetServer: poeVelaL10n.state.preference.assetServer,
   })
-  ElMessage.success("保存成功")
+  ElNotification.success("保存成功")
   testAssetServer()
 }
 
@@ -145,7 +145,7 @@ const resetAssetServer = () => {
     assetProxy: PreferenceEntityDefault.assetProxy,
     assetServer: PreferenceEntityDefault.assetServer,
   })
-  ElMessage.success("重置成功")
+  ElNotification.success("重置成功")
   testAssetServer()
 }
 
@@ -156,12 +156,8 @@ const testAssetServer = () => {
   poeVelaL10n.testConnectivityResult = null
   poeVelaL10n.actions.testAssetServer()
     .then((res) => {
-      if (res.status) {
-        ElMessage.success({
-          message: `连通成功 耗时 ${res.latency} /ms`,
-        })
-      } else {
-        ElMessage.error({
+      if (!res.status) {
+        ElNotification.error({
           message: "连接资产服务器失败",
         })
       }
@@ -173,7 +169,7 @@ const bottonState = computed(() => {
 })
 
 const handleProxyInputClick = () => {
-  if (poeVelaL10n.state.preference.assetProxy === "") {
+  if (poeVelaL10n.state.preference.assetProxy == "" || poeVelaL10n.state.preference.assetProxy == null) {
     poeVelaL10n.state.preference.assetProxy = "https://ghproxy.com/"
   }
 }
