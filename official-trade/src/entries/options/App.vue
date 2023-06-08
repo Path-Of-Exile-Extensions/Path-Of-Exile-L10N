@@ -94,19 +94,6 @@
             Github
           </el-link>
         </div>
-        <div class="flex flex-row items-center pl-2">
-          <span class="pr-2">Created By</span>
-          <el-link
-            type="primary"
-            href="https://www.pathofexile.com/account/view-profile/PleaseCallMeKiKi"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="py-0 h-auto"
-            title="kiki"
-          >
-            KiKi
-          </el-link>
-        </div>
       </div>
       <div class="flex flex-row">
         <p>Powered By: Vue.js</p>
@@ -189,12 +176,12 @@ const testAssetServer = () => {
 }
 
 const bottonState = computed(() => {
-  return poeVelaL10N.testConnectivityResult ? poeVelaL10N.testConnectivityResult.status ? 1 : 2 : 0
+  return poeVelaL10N.testConnectivityResult ? poeVelaL10N.testConnectivityResult ? 1 : 2 : 0
 })
 
 const handleProxyInputClick = () => {
-  if (poeVelaL10N.state.preference.assetProxy == "" || poeVelaL10N.state.preference.assetProxy == null) {
-    poeVelaL10N.state.preference.assetProxy = "https://ghproxy.com/"
+  if (poeVelaL10N.preference.assetProxy == "" || poeVelaL10N.preference.assetProxy == null) {
+    poeVelaL10N.preference.assetProxy = "https://ghproxy.com/"
   }
 }
 

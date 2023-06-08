@@ -51,7 +51,7 @@ const main = () => {
 
 const search = () => {
   tradeEl = document.querySelector("#trade")!
-  assets = AssetVendorMinimizeModel.decode(poeVelaL10N.palmCivet.menuSearch!);
+  assets = AssetVendorMinimizeModel.decode(poeVelaL10N.palmCivet!.menuSearch);
   const el = tradeEl.querySelector(".search-bar.search-advanced");
   const observer = new MutationObserver(
     () => {

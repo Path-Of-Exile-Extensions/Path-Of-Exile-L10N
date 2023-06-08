@@ -1,4 +1,4 @@
-import {AssetChecksum, AssetRecord, LanguageIdentities, ServerResourceTypes} from "@poe-vela/core/l10n";
+import {AssetChecksum, AssetVendorMinimize, LanguageIdentities, ServerResourceTypes} from "@poe-vela/core/l10n";
 import {GemEntity, GemStatModel} from "@poe-vela/core";
 
 export type PalmCivet = {
@@ -27,7 +27,7 @@ export type PalmCivetModel = {
   itemsBoth: ServerResourceTypes.Items.Items[];
   lang: LanguageIdentities;
   statsIdFlat: Map<string, string>
-  menuSearch: AssetRecord[],
+  menuSearch: Record<string, AssetVendorMinimize>,
   full: Map<string, string>,
   gemFlat: Map<string, GemEntity>,
   gemNames: Map<string, string>,
@@ -45,7 +45,7 @@ export namespace PalmCivetModel {
       checksums: [],
       common: new Map(),
       statsIdFlat: new Map(),
-      menuSearch: [],
+      menuSearch: {},
       full: new Map(),
       gemFlat: new Map(),
       gemNames: new Map(),
