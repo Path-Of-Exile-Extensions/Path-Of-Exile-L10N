@@ -71,8 +71,20 @@ Ext.message.onConnect(port => {
     await initialize();
     switch (message.identify) {
       case ExtMessagesIdentities["PalmCivet:Get"]:
+        PalmCivetService.Instance.update()
+          .then(changed => {
+            if (changed) {
+              Ext.message.multicast(
+                portStore.values(),
+                {
+                  identify: ExtMessagesIdentities["PalmCivet:Updated"],
+                  payload: PalmCivetService.Instance.palmCivet,
+                }
+              )
+            }
+          })
         return await PalmCivetService.Instance.get();
-      case ExtMessagesIdentities["PalmCivet:Update"]:
+      case ExtMessagesIdentities["PalmCivet:ForceUpdate"]:
         await PalmCivetService.Instance.forceUpdate();
         Ext.message.multicast(
           portStore.values(),

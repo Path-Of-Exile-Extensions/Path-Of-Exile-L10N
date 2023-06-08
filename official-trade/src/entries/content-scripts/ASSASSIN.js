@@ -9,7 +9,7 @@ function postMessage (data) {
         resolve(event.data.data);
         abortController.abort();
       }
-    }, {signal: abortController})
+    }, {signal: abortController.signal})
     window.postMessage({id, data, type: "req:ASSASSIN"}, "*");
   })
 }

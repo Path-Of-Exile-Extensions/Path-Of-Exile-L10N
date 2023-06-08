@@ -49,10 +49,15 @@ export class PalmCivetService {
     if (this.isInitialized) {
       return Promise.resolve(this.palmCivet);
     }
-    return this.update();
+    return this.forceUpdate();
   }
 
-  async update(): Promise<PalmCivetModel> {
+  /**
+   * 差量更新 palmCivet
+   * 返回 true 则表示发生变化
+   * 返回 false 则表示没有变化
+   */
+  async update(): Promise<boolean> {
     const data = await this.localRepository.findOne()
     if (data) {
       const modal = PalmCivetFiles.toPalmModel(data)
@@ -67,22 +72,23 @@ export class PalmCivetService {
         })
       }
       this.palmCivet = modal;
-      return this.palmCivet;
+      // 如果 result.length 大于 0 则表示发生变化
+      return Promise.resolve(result.length > 0)
     }
     return this.remoteRepository.all()
       .then(async (res) => {
         await this.localRepository.upsert(res)
         this.palmCivet = PalmCivetFiles.toPalmModel(data)
-        return this.palmCivet;
+        return Promise.resolve(true)
       });
   }
 
-  async forceUpdate(): Promise<void> {
+  async forceUpdate(): Promise<PalmCivetModel> {
     return this.remoteRepository.all()
       .then(async (res) => {
         await this.localRepository.upsert(res)
         this.palmCivet = PalmCivetFiles.toPalmModel(res)
-        return Promise.resolve();
+        return Promise.resolve(this.palmCivet);
       });
   }
 

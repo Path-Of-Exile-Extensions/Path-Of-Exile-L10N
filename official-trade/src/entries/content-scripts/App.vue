@@ -16,7 +16,7 @@ import usePoeVelaL10nContentScript from "@/classifed/use-poe-vela-l10n.content-s
 import {PalmCivetModel} from "@/domain/palm-civet";
 import {globalx} from "@/classifed/globalx";
 import {ExtMessagesIdentities} from "@/classifed/ext-messages";
-import {ElMessage} from "element-plus";
+import {Notifications} from "@/classifed/notifications";
 
 const poeVelaL10N = usePoeVelaL10nContentScript();
 
@@ -51,7 +51,7 @@ const main = () => {
 
 const search = () => {
   tradeEl = document.querySelector("#trade")!
-  assets = AssetVendorMinimizeModel.decode(poeVelaL10N.palmCivet!.menuSearch!);
+  assets = AssetVendorMinimizeModel.decode(poeVelaL10N.palmCivet.menuSearch!);
   const el = tradeEl.querySelector(".search-bar.search-advanced");
   const observer = new MutationObserver(
     () => {
@@ -91,20 +91,18 @@ onMounted(async () => {
         break;
       case ExtMessagesIdentities["Preference:Changed"]:
         poeVelaL10N.preference = message.payload;
+        Notifications.PreferenceChanged();
         if (!poeVelaL10N.preference.enableTranslation) {
           poeVelaL10N.restore();
         }
         break;
       case ExtMessagesIdentities["PalmCivet:Updated"]:
         poeVelaL10N.palmCivet = message.payload;
+        Notifications.PalmCivetChanged();
         break;
       case ExtMessagesIdentities.Restore:
+        Notifications.PreferenceChanged();
         poeVelaL10N.restore();
-        ElMessage({
-          message: '[POE-Vela] 检测到配置项改变, 刷新页面后生效',
-          duration: 999999999,
-          showClose: true,
-        })
         break;
     }
     return undefined;

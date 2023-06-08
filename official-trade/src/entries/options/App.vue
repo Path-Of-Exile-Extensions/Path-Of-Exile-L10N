@@ -3,14 +3,14 @@
     <el-form class="w-[80vw] flex-1" label-width="120">
       <el-form-item label="资产加速服务器">
         <el-input
-          v-model="poeVelaL10n.state.preference.assetProxy"
+          v-model="poeVelaL10N.preference.assetProxy"
           placeholder="https://ghproxy.com/"
           @click="handleProxyInputClick"
         />
       </el-form-item>
       <el-form-item label="资产服务器">
         <el-input
-          v-model="poeVelaL10n.state.preference.assetServer"
+          v-model="poeVelaL10N.preference.assetServer"
           placeholder="https://github.com/Path-Of-Exile-Vela/L10N-Assets"
         />
       </el-form-item>
@@ -30,7 +30,7 @@
             @click="testAssetServer"
           >
             <mutable-icon :state="bottonState"/>
-            <span class="pl-1">测速 {{ poeVelaL10n.testConnectivityResult ? poeVelaL10n.testConnectivityResult.latency + " /ms" : "" }}</span>
+            <span class="pl-1">测速 {{ poeVelaL10N.testConnectivityResult ? poeVelaL10N.testConnectivityResult.latency + " /ms" : "" }}</span>
           </el-button>
         </el-button-group>
       </el-form-item>
@@ -121,17 +121,41 @@ import {PreferenceEntityDefault} from "@poe-vela/l10n-ext";
 import usePoeVelaL10nPopup from "@/classifed/use-poe-vela-l10n.popup";
 import MutableIcon from "@/components/mutable-icon.vue";
 import {ElNotification} from "element-plus";
-import {computed} from "vue";
+import {computed, onMounted} from "vue";
+import {Ext} from "@poe-vela/core/browser";
+import {globalx} from "@/classifed/globalx";
+import {ExtMessagesIdentities} from "@/classifed/ext-messages";
 
-const poeVelaL10n = usePoeVelaL10nPopup();
+const poeVelaL10N = usePoeVelaL10nPopup();
 
+onMounted(async () => {
+  Ext.message
+    .post$(globalx.port!, {identify: ExtMessagesIdentities.Initialize})
+    .then(res => {
+      poeVelaL10N.initial(res)
+    })
+
+  Ext.message.addListener.message(
+    globalx.port!,
+    message => {
+      switch (message.identify) {
+        case ExtMessagesIdentities.ReInitialize:
+          poeVelaL10N.initial(message.payload)
+          break;
+        case ExtMessagesIdentities["Preference:Changed"]:
+          poeVelaL10N.preference = message.payload;
+          break;
+      }
+    }
+  )
+})
 /**
  * 保存资产服务器和资产代理服务器的配置
  */
 const handleSave = () => {
-  poeVelaL10n.actions.updatePreference({
-    assetProxy: poeVelaL10n.state.preference.assetProxy,
-    assetServer: poeVelaL10n.state.preference.assetServer,
+  poeVelaL10N.updatePreference({
+    assetProxy: poeVelaL10N.preference.assetProxy,
+    assetServer: poeVelaL10N.preference.assetServer,
   })
   ElNotification.success("保存成功")
   testAssetServer()
@@ -141,7 +165,7 @@ const handleSave = () => {
  * 重置资产服务器和资产代理服务器的配置
  */
 const resetAssetServer = () => {
-  poeVelaL10n.actions.updatePreference({
+  poeVelaL10N.updatePreference({
     assetProxy: PreferenceEntityDefault.assetProxy,
     assetServer: PreferenceEntityDefault.assetServer,
   })
@@ -153,8 +177,8 @@ const resetAssetServer = () => {
  * 检测资产服务器
  */
 const testAssetServer = () => {
-  poeVelaL10n.testConnectivityResult = null
-  poeVelaL10n.actions.testAssetServer()
+  poeVelaL10N.testConnectivityResult = null
+  poeVelaL10N.testAssetServer()
     .then((res) => {
       if (!res.status) {
         ElNotification.error({
@@ -165,12 +189,12 @@ const testAssetServer = () => {
 }
 
 const bottonState = computed(() => {
-  return poeVelaL10n.testConnectivityResult ? poeVelaL10n.testConnectivityResult.status ? 1 : 2 : 0
+  return poeVelaL10N.testConnectivityResult ? poeVelaL10N.testConnectivityResult.status ? 1 : 2 : 0
 })
 
 const handleProxyInputClick = () => {
-  if (poeVelaL10n.state.preference.assetProxy == "" || poeVelaL10n.state.preference.assetProxy == null) {
-    poeVelaL10n.state.preference.assetProxy = "https://ghproxy.com/"
+  if (poeVelaL10N.state.preference.assetProxy == "" || poeVelaL10N.state.preference.assetProxy == null) {
+    poeVelaL10N.state.preference.assetProxy = "https://ghproxy.com/"
   }
 }
 

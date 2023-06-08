@@ -6,12 +6,12 @@ export enum ExtMessagesIdentities {
   "Preference:Get" = "Preference:Get",
   "Preference:Update" = "Preference:Update",
   "Preference:Changed" = "Preference:Changed",
-  // 客户端主动更新数据
+  // 更新数据(差量更新)
   "PalmCivet:Update" = "PalmCivet:Update",
+  // 更新数据(全量更新)
+  "PalmCivet:ForceUpdate" = "PalmCivet:ForceUpdate",
   // 客户端主动更新数据完成
   "PalmCivet:Updated" = "PalmCivet:Updated",
-  // PalmCivet 数据发生变化, 通知 ContentScript 和 Popup
-  "PalmCivet:Changed" = "PalmCivet:Changed",
   // 客户端主动获取数据
   "PalmCivet:Get" = "PalmCivet:Get",
   // 还原

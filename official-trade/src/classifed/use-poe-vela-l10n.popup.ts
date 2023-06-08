@@ -1,44 +1,43 @@
-import {getCurrentInstance, onMounted, reactive, ref} from 'vue'
-import {Ext} from "@poe-vela/core/browser";
-import {ExtMessagesIdentities} from "./ext-messages";
-import {defineStore} from "pinia";
-import {PreferenceEntity, PreferenceEntityDefault} from "@poe-vela/l10n-ext";
-import {globalx} from "@/classifed/globalx";
-import {TestConnectivityResult} from "../../../../Vela/src";
-import {executeAtLeast} from "../../../../Vela";
+import { defineStore } from 'pinia';
+import { Ext } from '@poe-vela/core/browser';
+import { ExtMessagesIdentities } from './ext-messages';
+import { PreferenceEntity, PreferenceEntityDefault } from '@poe-vela/l10n-ext';
+import { globalx } from '@/classifed/globalx';
+import { executeAtLeast, TestConnectivityResult } from '@poe-vela/core';
 
 export type POEVelaL10NPopupViewState = {
   // 是否正在更新资产
-  isUpdatingAssets: boolean,
+  isUpdatingAssets: boolean;
   // 更新资产结果
-  isUpdateAssetsResult: "none" | "successful" | "failed",
+  isUpdateAssetsResult: 'none' | 'successful' | 'failed';
   // 用户偏好
-  preference: PreferenceEntity
+  preference: PreferenceEntity;
   // 是否初始化基础数据完成
-  isInitial: boolean
-}
+  isInitial: boolean;
+  testConnectivityResult: TestConnectivityResult | null
+};
 
-const initState: POEVelaL10NPopupViewState = {
-  isUpdateAssetsResult: "none",
+const getInitState = (): POEVelaL10NPopupViewState => ({
+  isUpdateAssetsResult: 'none',
   isUpdatingAssets: false,
   preference: PreferenceEntityDefault,
   isInitial: false,
-}
+  testConnectivityResult: null
+});
 
-export default defineStore('poe-vela-l10n-popup', () => {
-  const state = reactive<POEVelaL10NPopupViewState>(initState)
-  // 测速结果
-  const testConnectivityResult = ref<TestConnectivityResult | null>(null)
-
-  const actions = {
+export default defineStore('poe-vela-l10n-popup', {
+  state() {
+    return getInitState();
+  },
+  actions: {
     initial(_state: { preference: PreferenceEntity }) {
       if (_state.preference) {
-        state.preference = {
-          ...state.preference,
+        this.preference = {
+          ...this.preference,
           ..._state.preference,
         };
       }
-      state.isInitial = true;
+      this.isInitial = true;
     },
 
     /**
@@ -47,81 +46,48 @@ export default defineStore('poe-vela-l10n-popup', () => {
      */
     async updatePreference(preference: Partial<PreferenceEntity>) {
       const newPreference = {
-        ...state.preference,
+        ...this.preference,
         ...preference,
-      }
+      };
 
-      Ext.message.post(
-        globalx.port!,
-        {identify: ExtMessagesIdentities["Preference:Update"], payload: newPreference,}
-      )
+      Ext.message.post(globalx.port!, {
+        identify: ExtMessagesIdentities['Preference:Update'],
+        payload: newPreference,
+      });
 
-      state.preference = newPreference;
+      this.preference = newPreference;
     },
     async updateAssets() {
-      state.isUpdatingAssets = true;
+      this.isUpdatingAssets = true;
       return Ext.message
-        .post$(
-          globalx.port!,
-          {identify: ExtMessagesIdentities["PalmCivet:Update"],}
-        )
+        .post$(globalx.port!, {
+          identify: ExtMessagesIdentities['PalmCivet:ForceUpdate'],
+        })
         .then(() => {
-          state.isUpdatingAssets = false;
-          state.isUpdateAssetsResult = "successful"
+          this.isUpdatingAssets = false;
+          this.isUpdateAssetsResult = 'successful';
         })
         .catch(err => {
-          state.isUpdatingAssets = false;
-          state.isUpdateAssetsResult = "failed"
-        })
+          this.isUpdatingAssets = false;
+          this.isUpdateAssetsResult = 'failed';
+        });
     },
     async restore() {
-      Object.assign(state, initState)
-      Ext.message.post(
-        globalx.port!,
-        {
-          identify: ExtMessagesIdentities.Restore,
-        }
-      )
+      Object.assign(this.$state, getInitState());
+      Ext.message.post(globalx.port!, {
+        identify: ExtMessagesIdentities.Restore,
+      });
     },
     testAssetServer() {
       return executeAtLeast<TestConnectivityResult>(
-        Ext.message.post$(globalx.port!, {identify: ExtMessagesIdentities.TestAssetServer}),
+        Ext.message.post$(globalx.port!, {
+          identify: ExtMessagesIdentities.TestAssetServer,
+        }),
         1000
-      )
-        .then((res) => {
-          testConnectivityResult.value = res;
-          return res;
-        })
-    }
-  }
-
-  if (getCurrentInstance()) {
-    onMounted(async () => {
-      Ext.message
-        .post$(globalx.port!, {identify: ExtMessagesIdentities.Initialize})
-        .then(res => {
-          actions.initial(res)
-        })
-
-      Ext.message.addListener.message(
-        globalx.port!,
-        message => {
-          switch (message.identify) {
-            case ExtMessagesIdentities.ReInitialize:
-              actions.initial(message.payload)
-              break;
-            case ExtMessagesIdentities["Preference:Changed"]:
-              state.preference = message.payload;
-              break;
-          }
-        }
-      )
-    })
-  }
-
-  return {
-    state: state,
-    actions: actions,
-    testConnectivityResult,
-  }
-})
+      ).then(res => {
+        this.testConnectivityResult = res;
+        return res;
+      });
+    },
+  },
+});

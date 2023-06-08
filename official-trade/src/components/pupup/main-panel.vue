@@ -1,12 +1,17 @@
 <template>
   <div class="flex flex-col">
-    <el-alert v-if="hasChanged" type="info" show-icon :closable="false">
+    <el-text class="self-center">
+      POE Vela L10N
+    </el-text>
+
+    <el-alert v-if="hasChanged" class="mt-2" type="info" show-icon :closable="false">
       <p>检测到配置项改变, 刷新页面后生效</p>
     </el-alert>
+
     <el-form size="small" class="mt-2">
       <el-form-item label="语言">
         <el-select
-          :model-value="poeVelaL10n.state.preference.language"
+          :model-value="poeVelaL10n.preference.language"
           placeholder="Select"
           class="w-full"
           @change="handleLanguageChange"
@@ -27,14 +32,14 @@
       </el-form-item>
       <el-form-item label="启用">
         <el-switch
-          :model-value="poeVelaL10n.state.preference.enableTranslation"
+          :model-value="poeVelaL10n.preference.enableTranslation"
           @change="handleEnableTranslationChange"
         >
         </el-switch>
       </el-form-item>
       <el-form-item label="操作">
         <el-button-group>
-          <el-button @click="handleAssetUpdate" :disabled="poeVelaL10n.state.isUpdatingAssets">
+          <el-button @click="handleAssetUpdate" :disabled="poeVelaL10n.isUpdatingAssets">
             <mutable-icon :state="buttonState"/>
             <span class="pl-1">更新资产</span>
           </el-button>
@@ -59,21 +64,21 @@ const hasChanged = ref(false);
 const poeVelaL10n = usePoeVelaL10nPopup()
 
 const handleEnableTranslationChange = () => {
-  poeVelaL10n.actions.updatePreference({
-    enableTranslation: !poeVelaL10n.state.preference.enableTranslation,
+  poeVelaL10n.updatePreference({
+    enableTranslation: !poeVelaL10n.preference.enableTranslation,
   })
 }
 
 const handleLanguageChange = (language: LanguageIdentities) => {
-  poeVelaL10n.actions.updatePreference({language: language} as Partial<PreferenceEntity>)
+  poeVelaL10n.updatePreference({language: language} as Partial<PreferenceEntity>)
 }
 
 const handleAssetUpdate = () => {
-  poeVelaL10n.actions.updateAssets()
+  poeVelaL10n.updateAssets()
 }
 
 const handleRestore = () => {
-  poeVelaL10n.actions.restore()
+  poeVelaL10n.restore()
 }
 
 const openOptions = () => {
@@ -81,11 +86,11 @@ const openOptions = () => {
 }
 
 const buttonState = computed(() => {
-  if (poeVelaL10n.state.isUpdatingAssets) {
+  if (poeVelaL10n.isUpdatingAssets) {
     return 0;
   }
-  if (poeVelaL10n.state.isUpdateAssetsResult !== "none") {
-    return poeVelaL10n.state.isUpdateAssetsResult === "successful" ? 1 : 2;
+  if (poeVelaL10n.isUpdateAssetsResult !== "none") {
+    return poeVelaL10n.isUpdateAssetsResult === "successful" ? 1 : 2;
   }
 })
 
@@ -94,13 +99,13 @@ const buttonState = computed(() => {
  */
 const isInitial = ref(false)
 
-watch(() => poeVelaL10n.state.preference, () => {
+watch(() => poeVelaL10n.preference, () => {
   if (isInitial.value) {
     hasChanged.value = true;
   }
 }, {deep: true})
 
-watch(() => poeVelaL10n.state.isInitial, (newValue, oldValue) => {
+watch(() => poeVelaL10n.isInitial, (newValue, oldValue) => {
   if (!oldValue && newValue) {
     isInitial.value = true
   }
