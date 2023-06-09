@@ -5,7 +5,6 @@ const sharedManifest = {
   description: "A Path Of Exile Official Trade Website I10N Extension",
   version: pkg.version,
   permissions: [
-    "webNavigation",
     "storage",
     "unlimitedStorage",
     "activeTab",
@@ -13,9 +12,7 @@ const sharedManifest = {
   ],
   content_scripts: [
     {
-      matches: [
-        "https://www.pathofexile.com/trade/*"
-      ],
+      matches: ["<all_urls>"],
       js: [
         "src/entries/content-scripts/ASSASSIN.js",
         "src/entries/content-scripts/main.ts",
