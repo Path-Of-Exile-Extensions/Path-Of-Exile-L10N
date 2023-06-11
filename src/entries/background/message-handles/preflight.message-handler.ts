@@ -3,11 +3,11 @@ import {MessageHandlerBase} from "./message-handler.base";
 import {Stat, TradeFetchTypes} from "@poe-vela/core/l10n";
 import {cloneDeep} from "lodash-es";
 import {PalmCivetService} from "@/domain/palm-civet";
+import {FrameType} from "@poe-vela/core";
 
 export class PreflightMessageHandler extends MessageHandlerBase {
   handle(message: ExtMessage<TradeFetchTypes.Result[]>, statsFlat: Map<string, string>) {
     return message.payload = message.payload!.map((i: TradeFetchTypes.Result) => {
-
       if (!i.item) {
         return i;
       }
@@ -25,8 +25,9 @@ export class PreflightMessageHandler extends MessageHandlerBase {
         this.__properties(output.item.properties!)
       }
 
+
       // 本地化技能宝石
-      if (i.item.explicitMods && !i.item.extended.mods) {
+      if (i.item.frameType === FrameType.Gem) {
         /**
          * 如果是瓦尔技能宝石
          * typeLine 为瓦尔技能名称, 原始技能名称为 hybrid.baseTypeName
@@ -85,6 +86,11 @@ export class PreflightMessageHandler extends MessageHandlerBase {
 
           return output;
         }
+      }
+
+      // 本地化通货
+      if (i.item.frameType === FrameType.DivinationCard) {
+        return output;
       }
 
       // 本地化名称

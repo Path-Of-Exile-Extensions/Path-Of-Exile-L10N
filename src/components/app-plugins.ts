@@ -13,6 +13,7 @@ import {
   ElSwitch,
   ElTooltip,
   ElNotification,
+  ElText,
 } from "element-plus";
 
 import 'element-plus/es/components/message/style/css'
@@ -28,6 +29,7 @@ import 'element-plus/es/components/alert/style/css'
 import 'element-plus/es/components/progress/style/css'
 import 'element-plus/es/components/input/style/css'
 import 'element-plus/es/components/notification/style/css'
+import 'element-plus/es/components/text/style/css'
 import "./styles/index.css"
 
 export default {
@@ -48,5 +50,6 @@ export default {
     app.use(ElProgress)
     app.use(ElInput)
     app.use(ElNotification)
+    app.use(ElText)
   },
 };
