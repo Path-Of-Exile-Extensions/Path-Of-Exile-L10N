@@ -1,10 +1,10 @@
 import {Ext, PortStore} from "@poe-vela/core/browser";
 import initialize from "./classifed/initialize";
 import {ExtMessagesIdentities} from "@/classifed/ext-messages";
-import {PreferenceService} from "@poe-vela/l10n-ext";
 import {PalmCivetService} from "@/domain/palm-civet";
 import {PreflightMessageHandler} from "./message-handles";
 import {TestAssetServerMessageHandler} from "@/entries/background/message-handles/test-asset-server.message-handler";
+import {PreferenceService} from "@/domain/preference";
 
 const getViewData = () => {
   return {

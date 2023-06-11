@@ -12,7 +12,9 @@ const sharedManifest = {
   ],
   content_scripts: [
     {
-      matches: ["<all_urls>"],
+      matches: [
+        "https://www.pathofexile.com/trade/*",
+      ],
       js: [
         "src/entries/content-scripts/ASSASSIN.js",
         "src/entries/content-scripts/main.ts",

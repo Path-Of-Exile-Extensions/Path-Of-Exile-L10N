@@ -1,4 +1,3 @@
-import {PreferenceService} from "@poe-vela/l10n-ext";
 import {Ext} from "@poe-vela/core/browser";
 import {ExtMessagesIdentities} from "@/classifed/ext-messages";
 import {ElMessage} from "element-plus";

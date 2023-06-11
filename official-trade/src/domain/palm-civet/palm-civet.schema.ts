@@ -1,7 +1,7 @@
 import {RxJsonSchema} from "rxdb";
 import {PalmCivet} from "./palm-civet";
 
-const _PalmCivetSchemaLiteral = {
+export const PalmCivetSchemaLiteral: RxJsonSchema<PalmCivet> = {
   title: 'PalmCivet',
   version: 2,
   primaryKey: 'lang',
@@ -52,4 +52,3 @@ const _PalmCivetSchemaLiteral = {
   required: ['lang'],
 } as const
 
-export const PalmCivetSchemaLiteral: RxJsonSchema<PalmCivet> = _PalmCivetSchemaLiteral;

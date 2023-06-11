@@ -1,5 +1,6 @@
-import {DB, PreferenceService} from "@poe-vela/l10n-ext";
 import {PalmCivetService} from "@/domain/palm-civet";
+import {DbDriver} from "@poe-vela/core/repository";
+import {PreferenceService} from "@/domain/preference";
 
 let isInitializing = false;
 let isInitialized = false;
@@ -25,7 +26,7 @@ export default async function initialize() {
   }
   isInitializing = true;
   try {
-    await DB.Instance.initialize();
+    await DbDriver.initialize();
     await PreferenceService.Instance.initialize();
     await PalmCivetService.Instance.initialize();
     isInitialized = true;

@@ -54,10 +54,10 @@
 <script setup lang="ts">
 import {LanguageIdentities} from "@poe-vela/core/l10n";
 import {Ext} from "@poe-vela/core/browser"
-import {PreferenceEntity} from "@poe-vela/l10n-ext";
 import usePoeVelaL10nPopup from "@/classifed/use-poe-vela-l10n.popup";
 import {computed, ref, watch} from "vue";
 import MutableIcon from "@/components/mutable-icon.vue";
+import {PreferenceEntity} from "@/domain/preference";
 
 const hasChanged = ref(false);
 

@@ -1,9 +1,10 @@
-import {PreferenceService, RepositoryBase, RxRepositoryBase} from "@poe-vela/l10n-ext";
 import {PalmCivetSchemaLiteral} from "./palm-civet.schema";
 import {PalmCivet} from './palm-civet'
-import {AssetChecksum, LanguageIdentities} from "@poe-vela/core/l10n";
+import {AssetChecksum} from "@poe-vela/core/l10n";
 import {identity} from "lodash-es";
 import {PalmCivetFiles} from "./palm-civet-files";
+import {RepositoryBase, RxRepositoryBase} from "@poe-vela/core/repository";
+import {PreferenceEntityDefault, PreferenceService} from "@/domain/preference";
 
 export class StaticLocalRepository extends RxRepositoryBase<PalmCivet> {
   get dbName() {
@@ -23,13 +24,42 @@ export class StaticLocalRepository extends RxRepositoryBase<PalmCivet> {
     return Promise.resolve(undefined);
   }
 
+  create(struct: PalmCivet): Promise<PalmCivet> {
+    throw new Error("Method not implemented.");
+  }
+
+  createMany(structs: PalmCivet[]): Promise<PalmCivet[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  delete(struct: PalmCivet): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+
+  deleteMany(structs: PalmCivet[]): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+
+  query(args: any): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+
+  update(struct: PalmCivet): Promise<PalmCivet> {
+    throw new Error("Method not implemented.");
+  }
+
+  updateMany(structs: PalmCivet[]): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+
 }
 
 export class StaticRemoteRepository extends RepositoryBase<PalmCivet> {
 
   get assetHost() {
     const preference = PreferenceService.Instance.preference;
-    const host = `${preference.assetServer}/master/${PreferenceService.Instance.preference.language}/`
+    const assetServer = preference.assetServer || PreferenceEntityDefault.assetServer;
+    const host = `${assetServer}/master/${PreferenceService.Instance.preference.language}/`
     if (preference.assetProxy) {
       return preference.assetProxy + host;
     } else {
@@ -70,5 +100,41 @@ export class StaticRemoteRepository extends RepositoryBase<PalmCivet> {
 
   initialize(): Promise<void> {
     return Promise.resolve(undefined);
+  }
+
+  create(struct: PalmCivet): Promise<PalmCivet> {
+    throw new Error("Method not implemented.");
+  }
+
+  createMany(structs: PalmCivet[]): Promise<PalmCivet[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  delete(struct: PalmCivet): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+
+  deleteMany(structs: PalmCivet[]): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+
+  query(args: any): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+
+  update(struct: PalmCivet): Promise<PalmCivet> {
+    throw new Error("Method not implemented.");
+  }
+
+  updateMany(structs: PalmCivet[]): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+
+  upsert(struct: PalmCivet): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+
+  upsertMany(structs: PalmCivet[]): Promise<any> {
+    throw new Error("Method not implemented.");
   }
 }

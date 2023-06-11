@@ -104,7 +104,6 @@
 </template>
 
 <script setup lang="ts">
-import {PreferenceEntityDefault} from "@poe-vela/l10n-ext";
 import usePoeVelaL10nPopup from "@/classifed/use-poe-vela-l10n.popup";
 import MutableIcon from "@/components/mutable-icon.vue";
 import {ElNotification} from "element-plus";
@@ -112,6 +111,7 @@ import {computed, onMounted} from "vue";
 import {Ext} from "@poe-vela/core/browser";
 import {globalx} from "@/classifed/globalx";
 import {ExtMessagesIdentities} from "@/classifed/ext-messages";
+import {PreferenceEntityDefault} from "@/domain/preference";
 
 const poeVelaL10N = usePoeVelaL10nPopup();
 

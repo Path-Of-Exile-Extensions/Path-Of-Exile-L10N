@@ -1,7 +1,7 @@
 import {ExtMessage} from "@poe-vela/core/browser";
 import {MessageHandlerBase} from "./message-handler.base";
 import {testConnectivity} from "@poe-vela/core";
-import {PreferenceService} from "@poe-vela/l10n-ext";
+import {PreferenceService} from "@/domain/preference";
 
 export class TestAssetServerMessageHandler extends MessageHandlerBase {
   handle(message: ExtMessage<undefined>) {

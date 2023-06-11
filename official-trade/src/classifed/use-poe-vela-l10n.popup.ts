@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
 import { Ext } from '@poe-vela/core/browser';
 import { ExtMessagesIdentities } from './ext-messages';
-import { PreferenceEntity, PreferenceEntityDefault } from '@poe-vela/l10n-ext';
 import { globalx } from '@/classifed/globalx';
 import { executeAtLeast, TestConnectivityResult } from '@poe-vela/core';
+import {PreferenceEntity, PreferenceEntityDefault} from "@/domain/preference";
 
 export type POEVelaL10NPopupViewState = {
   // 是否正在更新资产

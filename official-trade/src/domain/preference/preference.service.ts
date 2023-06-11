@@ -59,9 +59,12 @@ export class PreferenceService {
     return this.preferenceRepository.upsert(this._preference);
   }
 
-  deleteAll() {
+  delete() {
     this._preference = PreferenceEntityDefault;
-    return this.preferenceRepository.deleteAll()
+    return this.preferenceRepository.delete()
   }
 
+  async deleteAll() {
+    return this.delete();
+  }
 }

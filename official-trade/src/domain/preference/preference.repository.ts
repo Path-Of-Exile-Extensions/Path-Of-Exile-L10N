@@ -1,6 +1,6 @@
 import {PreferenceSchemaLiteral} from "./preference.schema";
 import {PreferenceEntity} from "./preference.entity";
-import {RxRepositoryBase} from "../../atomic/rx-repository";
+import {RxRepositoryBase} from "@poe-vela/core/repository";
 import {identity} from "@poe-vela/core";
 
 export class PreferenceRepository extends RxRepositoryBase<PreferenceEntity> {
@@ -56,4 +56,25 @@ export class PreferenceRepository extends RxRepositoryBase<PreferenceEntity> {
     await result.remove();
     return Promise.resolve(null);
   }
+
+  createMany(structs: PreferenceEntity[]): Promise<PreferenceEntity[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  deleteMany(structs: PreferenceEntity[]): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+
+  query(args: any): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+
+  update(struct: PreferenceEntity): Promise<PreferenceEntity> {
+    throw new Error("Method not implemented.");
+  }
+
+  updateMany(structs: PreferenceEntity[]): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
+
 }

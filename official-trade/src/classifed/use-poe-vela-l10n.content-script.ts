@@ -1,9 +1,9 @@
 import {Ext} from "@poe-vela/core/browser";
 import {ExtMessagesIdentities} from "./ext-messages";
 import {defineStore} from "pinia";
-import {PreferenceEntity, PreferenceEntityDefault} from "@poe-vela/l10n-ext";
 import {PalmCivetModel} from "@/domain/palm-civet";
 import {globalx} from "@/classifed/globalx";
+import {PreferenceEntity, PreferenceEntityDefault} from "@/domain/preference";
 
 export type POEVelaL10NViewState = {
   // 用户偏好
