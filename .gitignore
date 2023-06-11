@@ -3,6 +3,9 @@ node_modules/
 # macOS
 .DS_Store
 dist/
+dist.crx
+dist.pem
+dist.zip
 
 
 # Created by https://www.gitignore.io/api/reactnative,intellij,android,osx,xcode
